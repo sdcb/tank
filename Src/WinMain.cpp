@@ -4,8 +4,6 @@
 
 #include "pch.h"
 #include "MainScene.h"
-#pragma comment(lib, "d3d11")
-#pragma comment(lib, "dxgi")
 
 using namespace DirectX;
 
@@ -178,7 +176,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         break;
 
-    case WM_ACTIVATEAPP:
+    case WM_ACTIVATEAPP:		
         if (game)
         {
             if (wParam)
@@ -254,6 +252,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         return MAKELRESULT(0, MNC_CLOSE);
     }
 
+	Keyboard::ProcessMessage(message, wParam, lParam);
+	Mouse::ProcessMessage(message, wParam, lParam);
     return DefWindowProc(hWnd, message, wParam, lParam);
 }
 

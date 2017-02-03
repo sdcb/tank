@@ -49,6 +49,12 @@ namespace DX
         DXGI_FORMAT             GetDepthBufferFormat() const            { return m_depthBufferFormat; }
         D3D11_VIEWPORT          GetScreenViewport() const               { return m_screenViewport; }
         UINT                    GetBackBufferCount() const              { return m_backBufferCount; }
+        KennyKerr::Direct2D::DeviceContext GetD2DDeviceContext() const  { return m_deviceContext; }
+        KennyKerr::Direct2D::Factory1      GetD2DFactory() const        { return m_d2dFactory; }
+        KennyKerr::DirectWrite::Factory1   GetDWriteFactory() const     { return m_dwriteFactory; }
+        KennyKerr::Wic::Factory            GetWicFactory() const        { return m_wicFactory; }
+		DirectX::Keyboard::State           GetKeyboardState() const     { return m_keyboard.GetState(); }
+		DirectX::Mouse::State              GetMouseState() const        { return m_mouse.GetState(); }
 
         // Performance events
         void PIXBeginEvent(_In_z_ const wchar_t* name)
@@ -86,6 +92,13 @@ namespace DX
         Microsoft::WRL::ComPtr<IDXGISwapChain>          m_swapChain;
         Microsoft::WRL::ComPtr<IDXGISwapChain1>         m_swapChain1;
         Microsoft::WRL::ComPtr<ID3DUserDefinedAnnotation> m_d3dAnnotation;
+
+		KennyKerr::Direct2D::DeviceContext              m_deviceContext;
+		KennyKerr::Direct2D::Factory1                   m_d2dFactory;
+		KennyKerr::DirectWrite::Factory1                m_dwriteFactory;
+		KennyKerr::Wic::Factory                         m_wicFactory;
+		DirectX::Keyboard                               m_keyboard;
+		DirectX::Mouse                                  m_mouse;
 
         // Direct3D rendering objects. Required for 3D.
         Microsoft::WRL::ComPtr<ID3D11Texture2D>         m_renderTarget;

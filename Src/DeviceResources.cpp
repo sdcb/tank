@@ -7,7 +7,8 @@
 #include "DeviceResources.h"
 
 using namespace DirectX;
-
+using namespace KennyKerr;
+using namespace KennyKerr::Direct2D;
 using Microsoft::WRL::ComPtr;
 
 namespace
@@ -44,7 +45,10 @@ DX::DeviceResources::DeviceResources(DXGI_FORMAT backBufferFormat, DXGI_FORMAT d
     m_window(0),
     m_d3dFeatureLevel(D3D_FEATURE_LEVEL_9_1),
     m_outputSize{0, 0, 1, 1},
-    m_deviceNotify(nullptr)
+    m_deviceNotify(nullptr), 
+	m_d2dFactory(CreateFactory()), 
+	m_dwriteFactory(DirectWrite::CreateFactory()), 
+	m_wicFactory(Wic::CreateFactory())
 {
 }
 
@@ -209,6 +213,8 @@ void DX::DeviceResources::CreateDeviceResources()
         (void) m_d3dContext.As(&m_d3dContext1);
         (void) m_d3dContext.As(&m_d3dAnnotation);
     }
+
+	m_deviceContext = m_d2dFactory.CreateDevice(m_d3dDevice.Get()).CreateDeviceContext();
 }
 
 // These resources need to be recreated every time the window size is changed.
@@ -222,6 +228,7 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
     // Clear the previous window size specific context.
     ID3D11RenderTargetView* nullViews[] = {nullptr};
     m_d3dContext->OMSetRenderTargets(_countof(nullViews), nullViews, nullptr);
+	m_deviceContext.SetTarget(nullptr);
     m_d3dRenderTargetView.Reset();
     m_d3dDepthStencilView.Reset();
     m_renderTarget.Reset();
@@ -374,6 +381,14 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
         static_cast<float>(backBufferWidth),
         static_cast<float>(backBufferHeight)
         );
+
+	BitmapProperties1 bmpProp{};
+	bmpProp.BitmapOptions = BitmapOptions::CannotDraw | BitmapOptions::Target;
+	bmpProp.DpiX = m_d2dFactory.GetDesktopDpi();
+	bmpProp.DpiY = m_d2dFactory.GetDesktopDpi();
+	bmpProp.PixelFormat.AlphaMode = AlphaMode::Premultiplied;
+	bmpProp.PixelFormat.Format = Dxgi::Format::B8G8R8A8_UNORM;
+	m_deviceContext.SetTarget(m_deviceContext.CreateBitmapFromDxgiSurface(m_swapChain.Get(), bmpProp));
 }
 
 // This method is called when the Win32 window is created (or re-created).
@@ -421,6 +436,7 @@ void DX::DeviceResources::HandleDeviceLost()
     m_d3dContext1.Reset();
     m_d3dAnnotation.Reset();
     m_d3dDevice1.Reset();
+	m_deviceContext.Reset();
 
 #ifdef _DEBUG
     {

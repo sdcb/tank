@@ -92,3 +92,8 @@ namespace DX
 
 #include <unordered_map>
 #include <string>
+struct LOGFONTW;
+#include <dx/dx.h>
+
+#define FMT_SHARED
+#include <fmt/format.h>

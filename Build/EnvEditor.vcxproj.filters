@@ -16,6 +16,9 @@
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="..\Src\SceneEditor\MainScene.cpp" />
+    <ClCompile Include="..\Src\TankSprite.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Src\DeviceResources.h">
@@ -28,5 +31,9 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="..\Src\SceneEditor\MainScene.h" />
+    <ClInclude Include="..\Src\TankSprite.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\SceneEditor\EnvType.h" />
   </ItemGroup>
 </Project>
