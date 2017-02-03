@@ -160,6 +160,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Src\DeviceResources.cpp" />
+    <ClCompile Include="..\Src\EnvEditor\Environment.cpp" />
     <ClCompile Include="..\Src\TankSprite.cpp" />
     <ClCompile Include="..\Src\WinMain.cpp" />
     <ClCompile Include="..\Src\pch.cpp">
@@ -172,9 +173,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Src\DeviceResources.h" />
+    <ClInclude Include="..\Src\EnvEditor\Environment.h" />
     <ClInclude Include="..\Src\pch.h" />
     <ClInclude Include="..\Src\EnvEditor\MainScene.h" />
-    <ClInclude Include="..\Src\EnvEditor\EnvType.h" />
+    <ClInclude Include="..\Src\PreDefined.h" />
     <ClInclude Include="..\Src\StepTimer.h" />
     <ClInclude Include="..\Src\TankSprite.h" />
   </ItemGroup>

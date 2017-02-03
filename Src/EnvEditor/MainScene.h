@@ -6,9 +6,13 @@
 
 #include "DeviceResources.h"
 #include "StepTimer.h"
+#include "PreDefined.h"
 #define PROJECT_NAME L"Env Editor"
 
 enum class EnvType;
+
+class BodyEnvType;
+
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -54,18 +58,24 @@ private:
 	void DrawEnv4(EnvType env, KennyKerr::Point2F topLeft);
 	void DrawEnvSelection();
 	KennyKerr::Point2F GetMousePos();
+	KennyKerr::Point2U GetMouseGridPos();
 	void DrawMousePosText();
 
-	const int GridCount = 13;
-	const int GridSize = 16;
-	const int GridWidth = GridSize * GridCount;
+	void DrawMainEnv();
 
     // Device resources.
     std::unique_ptr<DX::DeviceResources>    m_deviceResources;
 	KennyKerr::Direct2D::Bitmap1            m_bmp;
 	KennyKerr::Direct2D::SolidColorBrush    m_black, m_red;
+
+	// text format
 	KennyKerr::DirectWrite::TextFormat      m_textFormat;
-	EnvType                             m_selectedEnv;
+
+	// selected environment type
+	EnvType                                 m_selectedEnv;
+
+	// scene array
+	EnvironmentBody                         m_envs;
 
     // Rendering loop timer.
     DX::StepTimer                           m_timer;

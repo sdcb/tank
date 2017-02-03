@@ -92,6 +92,7 @@ namespace DX
 
 #include <unordered_map>
 #include <string>
+#include <array>
 struct LOGFONTW;
 #include <dx/dx.h>
 

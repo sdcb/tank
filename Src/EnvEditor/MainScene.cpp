@@ -5,7 +5,7 @@
 #include "pch.h"
 #include "MainScene.h"
 #include "TankSprite.h"
-#include "EnvType.h"
+#include "Environment.h"
 
 extern void ExitGame();
 
@@ -25,6 +25,7 @@ Game::Game() :
 {
 	m_deviceResources = std::make_unique<DX::DeviceResources>();
 	m_deviceResources->RegisterDeviceNotify(this);
+	m_envs = CreateBasicEnv();
 }
 
 // Initialize the Direct3D resources required to run.
@@ -40,10 +41,10 @@ void Game::Initialize(HWND window, int width, int height)
 
 	// TODO: Change the timer settings if you want something other than the default variable timestep mode.
 	// e.g. for 60 FPS fixed timestep update logic, call:
-	/*
+	
 	m_timer.SetFixedTimeStep(true);
 	m_timer.SetTargetElapsedSeconds(1.0 / 60);
-	*/
+	
 	m_textFormat = m_deviceResources->GetDWriteFactory().CreateTextFormat(L"Consolas", 12.0f);
 }
 
@@ -99,8 +100,9 @@ void Game::Render()
 void Game::Draw(KennyKerr::Direct2D::DeviceContext target)
 {
 	target.SetTransform(m_world);
-	target.FillRectangle(RectF{ 0, 0, (float)GridWidth, (float)GridWidth }, m_black);
+	target.FillRectangle(RectF{ 0, 0, (float)GridSize, (float)GridSize }, m_black);
 	DrawEnvSelection();
+	DrawMainEnv();
 	target.SetTransform(Matrix3x2F::Identity());
 	DrawMousePosText();
 }
@@ -195,7 +197,7 @@ void Game::CreateWindowSizeDependentResources()
 	// TODO: Initialize windows-size dependent objects here.
 	auto target = m_deviceResources->GetD2DDeviceContext();
 	auto size = target.GetSize();
-	auto scale = size.Height / GridWidth;
+	auto scale = size.Height / GridSize;
 	auto offsetX = (size.Width - size.Height) / 2;
 	m_world =
 		Matrix3x2F::Scale(scale, scale) *
@@ -234,6 +236,9 @@ void Game::DrawEnv(EnvType env, KennyKerr::Point2F topLeft)
 {
 	switch (env)
 	{
+	case EnvType::Empty:
+		// do nothing;
+		return;
 	case EnvType::Grass:
 		DrawTankSprite("Env-Grass", topLeft);
 		return;
@@ -249,16 +254,25 @@ void Game::DrawEnv(EnvType env, KennyKerr::Point2F topLeft)
 	case EnvType::Wall:
 		DrawTankSprite("Env-Wall", topLeft);
 		break;
+	default:
+		throw exception("Env is not supported.");
 	}
 }
 
 void Game::DrawEnv4(EnvType env, KennyKerr::Point2F topLeft)
 {
-	const float Size = 8.0f;
-	DrawEnv(env, topLeft);
-	DrawEnv(env, Point2F{ topLeft.X + Size, topLeft.Y });
-	DrawEnv(env, Point2F{ topLeft.X, topLeft.Y + Size });
-	DrawEnv(env, Point2F{ topLeft.X + Size, topLeft.Y + Size });
+	if (env == EnvType::Eager)
+	{
+		DrawTankSprite("Eager", topLeft);
+		return;
+	}
+	else
+	{
+		DrawEnv(env, topLeft);
+		DrawEnv(env, Point2F{ topLeft.X + GridUnitHalfSize, topLeft.Y });
+		DrawEnv(env, Point2F{ topLeft.X, topLeft.Y + GridUnitHalfSize });
+		DrawEnv(env, Point2F{ topLeft.X + GridUnitHalfSize, topLeft.Y + GridUnitHalfSize });
+	}
 }
 
 void Game::DrawEnvSelection()
@@ -272,9 +286,8 @@ void Game::DrawEnvSelection()
 		EnvType::Sea,
 		EnvType::Wall,
 	};
-	const float Size = 16.0f;
 
-	Point2F bp{ -Size - 2.0f, Size + 2.0f };
+	Point2F bp{ -GridUnitSize- 2.0f, GridUnitSize + 2.0f };
 
 	auto pos = GetMousePos();
 
@@ -284,14 +297,14 @@ void Game::DrawEnvSelection()
 		auto topLeft = Point2F
 		{
 			bp.X,
-			bp.Y + i * (Size + 2.0f)
+			bp.Y + i * (GridUnitSize + 2.0f)
 		};
 		DirectX::SimpleMath::Rectangle rect
 		{
 			long(topLeft.X),
 			long(topLeft.Y),
-			long(Size),
-			long(Size)
+			long(GridUnitSize),
+			long(GridUnitSize)
 		};
 		if (rect.Contains(Vector2(pos.X, pos.Y)))
 		{
@@ -304,7 +317,12 @@ void Game::DrawEnvSelection()
 		if (m_selectedEnv == env || rect.Contains(Vector2(pos.X, pos.Y)))
 		{
 			auto target = m_deviceResources->GetD2DDeviceContext();
-			auto rect = RectF{ topLeft.X, topLeft.Y, topLeft.X + Size, topLeft.Y + Size };
+			auto rect = RectF
+			{ 
+				topLeft.X, topLeft.Y, 
+				topLeft.X + GridUnitSize, 
+				topLeft.Y + GridUnitSize 
+			};
 			target.DrawRectangle(rect, m_red);
 		}
 		DrawEnv4(env, topLeft);
@@ -319,6 +337,17 @@ KennyKerr::Point2F Game::GetMousePos()
 	return worldCopy.TransformPoint({ (float)mouseState.x, (float)mouseState.y });
 }
 
+KennyKerr::Point2U Game::GetMouseGridPos()
+{
+	auto mousePos = GetMousePos();
+	Point2U gridPos
+	{
+		unsigned int(mousePos.X / GridUnitSize), 
+		unsigned int(mousePos.Y / GridUnitSize),
+	};
+	return gridPos;
+}
+
 void Game::DrawMousePosText()
 {
 	auto target = m_deviceResources->GetD2DDeviceContext();
@@ -327,9 +356,29 @@ void Game::DrawMousePosText()
 	auto rect = RectF{ 0, 0, size.Width, size.Height };
 
 	auto pos = GetMousePos();
-	auto str = fmt::format(L"x: {0}, y: {1}", pos.X, pos.Y);
+	auto gridPos = GetMouseGridPos();
+	auto str = fmt::format(L"pos: ({0}, {1})\r\n", pos.X, pos.Y);
+	str += fmt::format(L"grid: ({0}, {1})", gridPos.X, gridPos.Y);
 
 	target.DrawText(str.c_str(), str.size(), m_textFormat, rect, m_red);
+}
+
+void Game::DrawMainEnv()
+{
+	auto target = m_deviceResources->GetD2DDeviceContext();
+	const float Size = 16.0f;
+	for (size_t row = 0; row < m_envs.size(); ++row)
+	{
+		for (size_t col = 0; col < m_envs[row].size(); ++col)
+		{
+			Point2F topLeft
+			{
+				Size * col, 
+				Size * row
+			};
+			DrawEnv4(m_envs[row][col], topLeft);
+		}
+	}
 }
 
 void Game::OnDeviceLost()

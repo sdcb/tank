@@ -15,10 +15,11 @@
     <ClCompile Include="..\Src\pch.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\Src\SceneEditor\MainScene.cpp" />
+    <ClCompile Include="..\Src\EnvEditor\MainScene.cpp" />
     <ClCompile Include="..\Src\TankSprite.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="..\Src\EnvEditor\Environment.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Src\DeviceResources.h">
@@ -30,10 +31,13 @@
     <ClInclude Include="..\Src\StepTimer.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\Src\SceneEditor\MainScene.h" />
+    <ClInclude Include="..\Src\EnvEditor\MainScene.h" />
     <ClInclude Include="..\Src\TankSprite.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\Src\SceneEditor\EnvType.h" />
+    <ClInclude Include="..\Src\EnvEditor\Environment.h" />
+    <ClInclude Include="..\Src\PreDefined.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
