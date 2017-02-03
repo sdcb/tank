@@ -30,3 +30,9 @@
 
 # Customs
 *.suo
+*.VC.db
+*.user
+\ipch
+\Bin
+\Debug
+\Release
