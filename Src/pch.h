@@ -96,5 +96,5 @@ namespace DX
 struct LOGFONTW;
 #include <dx/dx.h>
 
-#define FMT_SHARED
+#define FMT_HEADER_ONLY
 #include <fmt/format.h>

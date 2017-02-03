@@ -9,7 +9,7 @@
 #include "PreDefined.h"
 #define PROJECT_NAME L"Env Editor"
 
-enum class EnvType;
+enum class EnvType : unsigned char;
 
 class BodyEnvType;
 
@@ -60,8 +60,7 @@ private:
 	KennyKerr::Point2F GetMousePos();
 	KennyKerr::Point2U GetMouseGridPos();
 	void DrawMousePosText();
-
-	void DrawMainEnv();
+	void DrawBodyEnv();
 
     // Device resources.
     std::unique_ptr<DX::DeviceResources>    m_deviceResources;
@@ -73,6 +72,7 @@ private:
 
 	// selected environment type
 	EnvType                                 m_selectedEnv;
+	bool                                    m_small = false;
 
 	// scene array
 	EnvironmentBody                         m_envs;

@@ -41,10 +41,10 @@ void Game::Initialize(HWND window, int width, int height)
 
 	// TODO: Change the timer settings if you want something other than the default variable timestep mode.
 	// e.g. for 60 FPS fixed timestep update logic, call:
-	
+
 	m_timer.SetFixedTimeStep(true);
 	m_timer.SetTargetElapsedSeconds(1.0 / 60);
-	
+
 	m_textFormat = m_deviceResources->GetDWriteFactory().CreateTextFormat(L"Consolas", 12.0f);
 }
 
@@ -102,9 +102,12 @@ void Game::Draw(KennyKerr::Direct2D::DeviceContext target)
 	target.SetTransform(m_world);
 	target.FillRectangle(RectF{ 0, 0, (float)GridSize, (float)GridSize }, m_black);
 	DrawEnvSelection();
-	DrawMainEnv();
+	DrawBodyEnv();
 	target.SetTransform(Matrix3x2F::Identity());
-	DrawMousePosText();
+	if (m_deviceResources->GetKeyboardState().Space)
+	{
+		DrawMousePosText();
+	}
 }
 
 // Helper method to clear the back buffers.
@@ -266,6 +269,18 @@ void Game::DrawEnv4(EnvType env, KennyKerr::Point2F topLeft)
 		DrawTankSprite("Eager", topLeft);
 		return;
 	}
+	else if (env == EnvType::Born)
+	{
+		DrawTankSprite(fmt::format("Star-{0}", m_timer.GetFrameCount() / 10 % 4), topLeft);
+	}
+	else if (env == EnvType::Player1)
+	{
+		DrawTankSprite(fmt::format("P1-1-U{0}", m_timer.GetFrameCount() / 10 % 2), topLeft);
+	}
+	else if (env == EnvType::Player2)
+	{
+		DrawTankSprite(fmt::format("P2-1-U{0}", m_timer.GetFrameCount() / 10 % 2), topLeft);
+	}
 	else
 	{
 		DrawEnv(env, topLeft);
@@ -287,18 +302,13 @@ void Game::DrawEnvSelection()
 		EnvType::Wall,
 	};
 
-	Point2F bp{ -GridUnitSize- 2.0f, GridUnitSize + 2.0f };
+	Point2F topLeft{ -GridUnitSize - 2.0f, 2.0f };
 
 	auto pos = GetMousePos();
 
 	for (size_t i = 0; i < envs.size(); ++i)
 	{
 		auto env = envs[i];
-		auto topLeft = Point2F
-		{
-			bp.X,
-			bp.Y + i * (GridUnitSize + 2.0f)
-		};
 		DirectX::SimpleMath::Rectangle rect
 		{
 			long(topLeft.X),
@@ -312,20 +322,59 @@ void Game::DrawEnvSelection()
 			if (mouseState.leftButton)
 			{
 				m_selectedEnv = env;
+				m_small = false;
 			}
 		}
-		if (m_selectedEnv == env || rect.Contains(Vector2(pos.X, pos.Y)))
+		DrawEnv4(env, topLeft);
+		if (!m_small && m_selectedEnv == env || rect.Contains(Vector2(pos.X, pos.Y)))
 		{
+			// draw selected
 			auto target = m_deviceResources->GetD2DDeviceContext();
 			auto rect = RectF
-			{ 
-				topLeft.X, topLeft.Y, 
-				topLeft.X + GridUnitSize, 
-				topLeft.Y + GridUnitSize 
+			{
+				topLeft.X, topLeft.Y,
+				topLeft.X + GridUnitSize,
+				topLeft.Y + GridUnitSize
 			};
 			target.DrawRectangle(rect, m_red);
 		}
-		DrawEnv4(env, topLeft);
+
+		topLeft.Y += GridUnitSize + 2.0f;
+	}
+
+	for (size_t i = 0; i < envs.size(); ++i)
+	{
+		auto env = envs[i];
+		DirectX::SimpleMath::Rectangle rect
+		{
+			long(topLeft.X),
+			long(topLeft.Y),
+			long(GridUnitHalfSize),
+			long(GridUnitHalfSize)
+		};
+		if (rect.Contains(Vector2(pos.X, pos.Y)))
+		{
+			auto mouseState = m_deviceResources->GetMouseState();
+			if (mouseState.leftButton)
+			{
+				m_selectedEnv = env;
+				m_small = true;
+			}
+		}
+		DrawEnv(env, topLeft);
+		if (m_small && m_selectedEnv == env || rect.Contains(Vector2(pos.X, pos.Y)))
+		{
+			auto target = m_deviceResources->GetD2DDeviceContext();
+			auto rect = RectF
+			{
+				topLeft.X, topLeft.Y,
+				topLeft.X + GridUnitHalfSize,
+				topLeft.Y + GridUnitHalfSize
+			};
+			target.DrawRectangle(rect, m_red);
+		}
+
+		topLeft.Y += GridUnitHalfSize + 2.0f;
 	}
 }
 
@@ -342,8 +391,8 @@ KennyKerr::Point2U Game::GetMouseGridPos()
 	auto mousePos = GetMousePos();
 	Point2U gridPos
 	{
-		unsigned int(mousePos.X / GridUnitSize), 
-		unsigned int(mousePos.Y / GridUnitSize),
+		(unsigned int)clamp(mousePos.X / GridUnitHalfSize, 0, GridCountDouble - 1),
+		(unsigned int)clamp(mousePos.Y / GridUnitHalfSize, 0, GridCountDouble - 1)
 	};
 	return gridPos;
 }
@@ -363,21 +412,97 @@ void Game::DrawMousePosText()
 	target.DrawText(str.c_str(), str.size(), m_textFormat, rect, m_red);
 }
 
-void Game::DrawMainEnv()
+void Game::DrawBodyEnv()
 {
-	auto target = m_deviceResources->GetD2DDeviceContext();
-	const float Size = 16.0f;
-	for (size_t row = 0; row < m_envs.size(); ++row)
+	auto mouseState = m_deviceResources->GetMouseState();
+	auto gridPos = GetMouseGridPos();
+	auto mousePos = GetMousePos();
+	auto fullRect = Rectangle{ 0, 0, (int)GridSize, (int)GridSize };
+	auto cursorInBody = fullRect.Contains(Vector2(mousePos.X, mousePos.Y));
+
+	auto SetPos4ToEnv = [&](EnvironmentBody& body, int x, int y, bool isSmall, EnvType type)
 	{
-		for (size_t col = 0; col < m_envs[row].size(); ++col)
+		body[y][x] = type;
+		if (!isSmall)
+		{
+			auto ox = clamp(x + 1, 0, GridCountDouble - 1);
+			auto oy = clamp(y + 1, 0, GridCountDouble - 1);
+
+			body[y][ox] = type;
+			body[oy][x] = type;
+			body[oy][ox] = type;
+		}
+	};
+
+	if (mouseState.leftButton && cursorInBody)
+	{
+		// cursor click
+		SetPos4ToEnv(m_envs, gridPos.X, gridPos.Y, m_small, m_selectedEnv);
+	}
+
+	auto target = m_deviceResources->GetD2DDeviceContext();
+	auto localEnv = m_envs;
+	// eager
+	SetPos4ToEnv(m_envs, GridCountDouble - 1, GridCountDouble / 2, false, EnvType::Empty);
+
+	// cursor environment
+	SetPos4ToEnv(localEnv, gridPos.X, gridPos.Y, m_small, m_selectedEnv);
+
+	// born
+	DrawEnv4(EnvType::Born, Point2F
+	{
+		0, 0
+	});
+	DrawEnv4(EnvType::Born, Point2F
+	{
+		GridUnitHalfSize * (GridCountDouble / 2 - 1), 0
+	});
+	DrawEnv4(EnvType::Born, Point2F
+	{
+		GridUnitHalfSize * (GridCountDouble - 2), 0
+	});
+	// player born 1-2
+	DrawEnv4(EnvType::Player1, Point2F
+	{
+		GridUnitHalfSize * (GridCountDouble / 2 - 5), GridUnitHalfSize * (GridCountDouble - 2)
+	});
+	DrawEnv4(EnvType::Player2, Point2F
+	{
+		GridUnitHalfSize * (GridCountDouble / 2 + 3), GridUnitHalfSize * (GridCountDouble - 2)
+	});
+
+	for (size_t row = 0; row < localEnv.size(); ++row)
+	{
+		for (size_t col = 0; col < localEnv[row].size(); ++col)
 		{
 			Point2F topLeft
 			{
-				Size * col, 
-				Size * row
+				GridUnitHalfSize * col,
+				GridUnitHalfSize * row
 			};
-			DrawEnv4(m_envs[row][col], topLeft);
+			DrawEnv(localEnv[row][col], topLeft);
 		}
+	}
+
+	// center eager
+	DrawEnv4(EnvType::Eager, Point2F
+	{
+		GridUnitHalfSize * (GridCountDouble / 2 - 1),
+		GridUnitHalfSize * (GridCountDouble - 2),
+	});
+
+	if (cursorInBody)
+	{
+		// cursor red rectangle
+		int times = m_small ? 1 : 2;
+		auto currentRect = RectF
+		{
+			(float)GridUnitHalfSize * gridPos.X,
+			(float)GridUnitHalfSize * gridPos.Y,
+			(float)GridUnitHalfSize * (gridPos.X + times),
+			(float)GridUnitHalfSize * (gridPos.Y + times)
+		};
+		target.DrawRectangle(currentRect, m_red);
 	}
 }
 

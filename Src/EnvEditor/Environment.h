@@ -2,7 +2,7 @@
 
 #include "PreDefined.h"
 
-enum class EnvType
+enum class EnvType : unsigned char
 {
 	Empty,
 	Grass,
@@ -11,8 +11,12 @@ enum class EnvType
 	Wall,
 	Sea,
 	Eager,
+	Born, 
+	Player1, 
+	Player2, 
 };
 
+EnvironmentBody ReadEnvFromString4(std::string str);
 EnvironmentBody ReadEnvFromString(std::string str);
 
 EnvironmentBody CreateBasicEnv();
