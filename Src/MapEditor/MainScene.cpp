@@ -443,7 +443,7 @@ void Game::DrawBodyEnv()
 	auto target = m_deviceResources->GetD2DDeviceContext();
 	auto localEnv = m_envs;
 	// eager
-	SetPos4ToEnv(m_envs, GridCountDouble - 1, GridCountDouble / 2, false, EnvType::Empty);
+	SetPos4ToEnv(m_envs, GridCountDouble / 2 - 1, GridCountDouble - 2, false, EnvType::Empty);
 
 	// cursor environment
 	SetPos4ToEnv(localEnv, gridPos.X, gridPos.Y, m_small, m_selectedEnv);

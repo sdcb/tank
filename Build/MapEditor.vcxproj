@@ -21,9 +21,9 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{34F11E43-E815-4724-8BDA-602218EF6BEC}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>EnvEditor</RootNamespace>
+    <RootNamespace>MapEditor</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
-    <ProjectName>EnvEditor</ProjectName>
+    <ProjectName>MapEditor</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -73,26 +73,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)Bin\$(Platform)_$(Configuration)\</OutDir>
-    <SourcePath>$(SolutionDir)\Src\EnvEditor;$(VC_SourcePath);</SourcePath>
-    <IncludePath>$(SolutionDir)\Src;$(SolutionDir)\Src\EnvEditor;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <SourcePath>$(SolutionDir)\Src\MapEditor;$(VC_SourcePath);</SourcePath>
+    <IncludePath>$(SolutionDir)\Src;$(SolutionDir)\Src\MapEditor;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)Bin\$(Platform)_$(Configuration)\</OutDir>
-    <SourcePath>$(SolutionDir)\Src\EnvEditor;$(VC_SourcePath);</SourcePath>
-    <IncludePath>$(SolutionDir)\Src;$(SolutionDir)\Src\EnvEditor;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <SourcePath>$(SolutionDir)\Src\MapEditor;$(VC_SourcePath);</SourcePath>
+    <IncludePath>$(SolutionDir)\Src;$(SolutionDir)\Src\MapEditor;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)Bin\$(Platform)_$(Configuration)\</OutDir>
-    <SourcePath>$(SolutionDir)\Src\EnvEditor;$(VC_SourcePath);</SourcePath>
-    <IncludePath>$(SolutionDir)\Src;$(SolutionDir)\Src\EnvEditor;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <SourcePath>$(SolutionDir)\Src\MapEditor;$(VC_SourcePath);</SourcePath>
+    <IncludePath>$(SolutionDir)\Src;$(SolutionDir)\Src\MapEditor;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)Bin\$(Platform)_$(Configuration)\</OutDir>
-    <SourcePath>$(SolutionDir)\Src\EnvEditor;$(VC_SourcePath);</SourcePath>
-    <IncludePath>$(SolutionDir)\Src;$(SolutionDir)\Src\EnvEditor;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <SourcePath>$(SolutionDir)\Src\MapEditor;$(VC_SourcePath);</SourcePath>
+    <IncludePath>$(SolutionDir)\Src;$(SolutionDir)\Src\MapEditor;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -160,7 +160,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Src\DeviceResources.cpp" />
-    <ClCompile Include="..\Src\EnvEditor\Environment.cpp" />
+    <ClCompile Include="..\Src\MapEditor\Environment.cpp" />
     <ClCompile Include="..\Src\TankSprite.cpp" />
     <ClCompile Include="..\Src\WinMain.cpp" />
     <ClCompile Include="..\Src\pch.cpp">
@@ -169,13 +169,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\Src\EnvEditor\MainScene.cpp" />
+    <ClCompile Include="..\Src\MapEditor\MainScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Src\DeviceResources.h" />
-    <ClInclude Include="..\Src\EnvEditor\Environment.h" />
+    <ClInclude Include="..\Src\MapEditor\Environment.h" />
     <ClInclude Include="..\Src\pch.h" />
-    <ClInclude Include="..\Src\EnvEditor\MainScene.h" />
+    <ClInclude Include="..\Src\MapEditor\MainScene.h" />
     <ClInclude Include="..\Src\PreDefined.h" />
     <ClInclude Include="..\Src\StepTimer.h" />
     <ClInclude Include="..\Src\TankSprite.h" />

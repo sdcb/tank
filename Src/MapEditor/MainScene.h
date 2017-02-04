@@ -7,7 +7,7 @@
 #include "DeviceResources.h"
 #include "StepTimer.h"
 #include "PreDefined.h"
-#define PROJECT_NAME L"Env Editor"
+#define PROJECT_NAME L"Map Editor"
 
 enum class EnvType : unsigned char;
 
