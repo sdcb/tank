@@ -42,6 +42,15 @@ EnvironmentBody ReadEnvFromString(std::string str)
 	return result;
 }
 
+void DeleteSpecialEnvironments(EnvironmentBody & body)
+{
+	// eager
+	SetPos4ToEnv(body, GridCountDouble / 2 - 1, GridCountDouble - 2, false, EnvType::Empty);
+	// player born 1-2
+	SetPos4ToEnv(body, GridCountDouble / 2 - 5, GridCountDouble - 2, false, EnvType::Empty);
+	SetPos4ToEnv(body, GridCountDouble / 2 + 3, GridCountDouble - 2, false, EnvType::Empty);
+}
+
 EnvironmentBody CreateBasicEnv()
 {
 	return ReadEnvFromString(
@@ -95,3 +104,18 @@ EnvType CharToEnvType(int v)
 		throw exception{ "char text not supported." };
 	}
 }
+
+
+void SetPos4ToEnv(EnvironmentBody& body, int x, int y, bool isSmall, EnvType type)
+{
+	body[y][x] = type;
+	if (!isSmall)
+	{
+		auto ox = clamp(x + 1, 0, GridCountDouble - 1);
+		auto oy = clamp(y + 1, 0, GridCountDouble - 1);
+
+		body[y][ox] = type;
+		body[oy][x] = type;
+		body[oy][ox] = type;
+	}
+};

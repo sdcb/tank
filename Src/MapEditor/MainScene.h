@@ -61,6 +61,7 @@ private:
 	KennyKerr::Point2U GetMouseGridPos();
 	void DrawMousePosText();
 	void DrawBodyEnv();
+	void DrawSpecialEnvironments();
 
     // Device resources.
     std::unique_ptr<DX::DeviceResources>    m_deviceResources;

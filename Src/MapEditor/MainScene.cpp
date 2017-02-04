@@ -420,20 +420,6 @@ void Game::DrawBodyEnv()
 	auto fullRect = Rectangle{ 0, 0, (int)GridSize, (int)GridSize };
 	auto cursorInBody = fullRect.Contains(Vector2(mousePos.X, mousePos.Y));
 
-	auto SetPos4ToEnv = [&](EnvironmentBody& body, int x, int y, bool isSmall, EnvType type)
-	{
-		body[y][x] = type;
-		if (!isSmall)
-		{
-			auto ox = clamp(x + 1, 0, GridCountDouble - 1);
-			auto oy = clamp(y + 1, 0, GridCountDouble - 1);
-
-			body[y][ox] = type;
-			body[oy][x] = type;
-			body[oy][ox] = type;
-		}
-	};
-
 	if (mouseState.leftButton && cursorInBody)
 	{
 		// cursor click
@@ -442,12 +428,43 @@ void Game::DrawBodyEnv()
 
 	auto target = m_deviceResources->GetD2DDeviceContext();
 	auto localEnv = m_envs;
-	// eager
-	SetPos4ToEnv(m_envs, GridCountDouble / 2 - 1, GridCountDouble - 2, false, EnvType::Empty);
+	DeleteSpecialEnvironments(m_envs);
 
 	// cursor environment
 	SetPos4ToEnv(localEnv, gridPos.X, gridPos.Y, m_small, m_selectedEnv);
 
+	DrawSpecialEnvironments();
+
+	for (size_t row = 0; row < localEnv.size(); ++row)
+	{
+		for (size_t col = 0; col < localEnv[row].size(); ++col)
+		{
+			Point2F topLeft
+			{
+				GridUnitHalfSize * col,
+				GridUnitHalfSize * row
+			};
+			DrawEnv(localEnv[row][col], topLeft);
+		}
+	}
+
+	if (cursorInBody)
+	{
+		// cursor red rectangle
+		int times = m_small ? 1 : 2;
+		auto currentRect = RectF
+		{
+			(float)GridUnitHalfSize * gridPos.X,
+			(float)GridUnitHalfSize * gridPos.Y,
+			(float)GridUnitHalfSize * (gridPos.X + times),
+			(float)GridUnitHalfSize * (gridPos.Y + times)
+		};
+		target.DrawRectangle(currentRect, m_red);
+	}
+}
+
+void Game::DrawSpecialEnvironments()
+{
 	// born
 	DrawEnv4(EnvType::Born, Point2F
 	{
@@ -470,40 +487,12 @@ void Game::DrawBodyEnv()
 	{
 		GridUnitHalfSize * (GridCountDouble / 2 + 3), GridUnitHalfSize * (GridCountDouble - 2)
 	});
-
-	for (size_t row = 0; row < localEnv.size(); ++row)
-	{
-		for (size_t col = 0; col < localEnv[row].size(); ++col)
-		{
-			Point2F topLeft
-			{
-				GridUnitHalfSize * col,
-				GridUnitHalfSize * row
-			};
-			DrawEnv(localEnv[row][col], topLeft);
-		}
-	}
-
 	// center eager
 	DrawEnv4(EnvType::Eager, Point2F
 	{
 		GridUnitHalfSize * (GridCountDouble / 2 - 1),
 		GridUnitHalfSize * (GridCountDouble - 2),
 	});
-
-	if (cursorInBody)
-	{
-		// cursor red rectangle
-		int times = m_small ? 1 : 2;
-		auto currentRect = RectF
-		{
-			(float)GridUnitHalfSize * gridPos.X,
-			(float)GridUnitHalfSize * gridPos.Y,
-			(float)GridUnitHalfSize * (gridPos.X + times),
-			(float)GridUnitHalfSize * (gridPos.Y + times)
-		};
-		target.DrawRectangle(currentRect, m_red);
-	}
 }
 
 void Game::OnDeviceLost()
