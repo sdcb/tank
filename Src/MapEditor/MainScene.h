@@ -53,7 +53,7 @@ private:
     void CreateDeviceDependentResources();
     void CreateWindowSizeDependentResources();
 
-	void DrawTankSprite(std::string id, KennyKerr::Point2F center);
+	void DrawTankSprite(TankSpriteType id, KennyKerr::Point2F center);
 	void DrawEnv(EnvType env, KennyKerr::Point2F topLeft);
 	void DrawEnv4(EnvType env, KennyKerr::Point2F topLeft);
 	void DrawEnvSelection();
@@ -82,7 +82,7 @@ private:
     DX::StepTimer                           m_timer;
 
 	// sprite map
-	std::unordered_map<std::string, KennyKerr::RectF> m_tankSpriteMap;
+	TankSpriteMapArray                      m_tankSpriteMap;
 
 	// scale
 	D2D1::Matrix3x2F                        m_world;

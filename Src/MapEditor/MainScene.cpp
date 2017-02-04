@@ -207,16 +207,16 @@ void Game::CreateWindowSizeDependentResources()
 		Matrix3x2F::Translation(offsetX, 0);
 }
 
-void Game::DrawTankSprite(std::string id, KennyKerr::Point2F topLeft)
+void Game::DrawTankSprite(TankSpriteType id, KennyKerr::Point2F topLeft)
 {
 #ifdef _DEBUG
-	if (m_tankSpriteMap.find(id) == m_tankSpriteMap.end())
+	if ((size_t)id > m_tankSpriteMap.size())
 	{
 		// asset not found.
 		DebugBreak();
 	}
 #endif
-	auto imagePos = m_tankSpriteMap[id];
+	auto imagePos = m_tankSpriteMap[(size_t)id];
 	RectF source
 	{
 		imagePos.Left,
@@ -243,19 +243,19 @@ void Game::DrawEnv(EnvType env, KennyKerr::Point2F topLeft)
 		// do nothing;
 		return;
 	case EnvType::Grass:
-		DrawTankSprite("Env-Grass", topLeft);
+		DrawTankSprite(TankSpriteType::Env_Grass, topLeft);
 		return;
 	case EnvType::Ice:
-		DrawTankSprite("Env-Ice", topLeft);
+		DrawTankSprite(TankSpriteType::Env_Ice, topLeft);
 		break;
 	case EnvType::Iron:
-		DrawTankSprite("Env-Iron", topLeft);
+		DrawTankSprite(TankSpriteType::Env_Iron, topLeft);
 		break;
 	case EnvType::Sea:
-		DrawTankSprite(fmt::format("Env-Sea{0}", m_timer.GetFrameCount() / 10 % 2), topLeft);
+		DrawTankSprite(TankSpriteType::Env_Sea0 + m_timer.GetFrameCount() / 10 % 2, topLeft);
 		break;
 	case EnvType::Wall:
-		DrawTankSprite("Env-Wall", topLeft);
+		DrawTankSprite(TankSpriteType::Env_Wall, topLeft);
 		break;
 	default:
 		throw exception("Env is not supported.");
@@ -266,20 +266,20 @@ void Game::DrawEnv4(EnvType env, KennyKerr::Point2F topLeft)
 {
 	if (env == EnvType::Eager)
 	{
-		DrawTankSprite("Eager", topLeft);
+		DrawTankSprite(TankSpriteType::Eager, topLeft);
 		return;
 	}
 	else if (env == EnvType::Born)
 	{
-		DrawTankSprite(fmt::format("Star-{0}", m_timer.GetFrameCount() / 10 % 4), topLeft);
+		DrawTankSprite(TankSpriteType::Star_0 + m_timer.GetFrameCount() / 10 % 4, topLeft);
 	}
 	else if (env == EnvType::Player1)
 	{
-		DrawTankSprite(fmt::format("P1-1-U{0}", m_timer.GetFrameCount() / 10 % 2), topLeft);
+		DrawTankSprite(TankSpriteType::P1_1_U0 + m_timer.GetFrameCount() / 10 % 2, topLeft);
 	}
 	else if (env == EnvType::Player2)
 	{
-		DrawTankSprite(fmt::format("P2-1-U{0}", m_timer.GetFrameCount() / 10 % 2), topLeft);
+		DrawTankSprite(TankSpriteType::P2_1_U0 + m_timer.GetFrameCount() / 10 % 2, topLeft);
 	}
 	else
 	{

@@ -49,12 +49,12 @@ namespace DX
         DXGI_FORMAT             GetDepthBufferFormat() const            { return m_depthBufferFormat; }
         D3D11_VIEWPORT          GetScreenViewport() const               { return m_screenViewport; }
         UINT                    GetBackBufferCount() const              { return m_backBufferCount; }
-        KennyKerr::Direct2D::DeviceContext GetD2DDeviceContext() const  { return m_deviceContext; }
-        KennyKerr::Direct2D::Factory1      GetD2DFactory() const        { return m_d2dFactory; }
-        KennyKerr::DirectWrite::Factory1   GetDWriteFactory() const     { return m_dwriteFactory; }
-        KennyKerr::Wic::Factory            GetWicFactory() const        { return m_wicFactory; }
-		DirectX::Keyboard::State           GetKeyboardState() const     { return m_keyboard.GetState(); }
-		DirectX::Mouse::State              GetMouseState() const        { return m_mouse.GetState(); }
+        KennyKerr::Direct2D::DeviceContext& GetD2DDeviceContext()       { return m_deviceContext; }
+        KennyKerr::Direct2D::Factory1       GetD2DFactory() const       { return m_d2dFactory; }
+        KennyKerr::DirectWrite::Factory1    GetDWriteFactory() const    { return m_dwriteFactory; }
+        KennyKerr::Wic::Factory             GetWicFactory() const       { return m_wicFactory; }
+		DirectX::Keyboard::State            GetKeyboardState() const    { return m_keyboard.GetState(); }
+		DirectX::Mouse::State               GetMouseState() const       { return m_mouse.GetState(); }
 
         // Performance events
         void PIXBeginEvent(_In_z_ const wchar_t* name)
