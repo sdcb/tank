@@ -22,6 +22,9 @@
     <ClCompile Include="..\Src\MapHelper.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="..\Src\GameBase.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Src\DeviceResources.h">
@@ -41,6 +44,9 @@
     </ClInclude>
     <ClInclude Include="..\Src\MapEditor\MainScene.h" />
     <ClInclude Include="..\Src\MapHelper.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\GameBase.h">
       <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>

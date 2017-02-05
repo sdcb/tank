@@ -7,6 +7,7 @@
 #include "DeviceResources.h"
 #include "StepTimer.h"
 #include "PreDefined.h"
+#include "GameBase.h"
 #define PROJECT_NAME L"Map Editor"
 
 class BodyEnvType;
@@ -14,42 +15,21 @@ class BodyEnvType;
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
-class Game : public DX::IDeviceNotify
+class Game : public GameBase
 {
 public:
-
     Game();
-
-    // Initialization and management
-    void Initialize(HWND window, int width, int height);
-
-    // Basic game loop
-    void Tick();
 
     // IDeviceNotify
     virtual void OnDeviceLost() override;
-    virtual void OnDeviceRestored() override;
-
-    // Messages
-    void OnActivated();
-    void OnDeactivated();
-    void OnSuspending();
-    void OnResuming();
-    void OnWindowSizeChanged(int width, int height);
-
-    // Properties
-    void GetDefaultSize( int& width, int& height ) const;
 
 private:
 
-    void Update(DX::StepTimer const& timer);
-    void Render();
-	void Draw(KennyKerr::Direct2D::DeviceContext target);
+    void Update(DX::StepTimer const& timer) override;
+	void Draw(KennyKerr::Direct2D::DeviceContext target) override;
 
-    void Clear();
-
-    void CreateDeviceDependentResources();
-    void CreateWindowSizeDependentResources();
+    void CreateDeviceResources() override;
+    void CreateWindowSizeResources() override;
 
 	void DrawTankSprite(Tank::TankSpriteType id, KennyKerr::Point2F center);
 	void DrawEnv(Tank::EnvType env, KennyKerr::Point2F topLeft);
@@ -62,7 +42,6 @@ private:
 	void DrawSpecialEnvironments();
 
     // Device resources.
-    std::unique_ptr<DX::DeviceResources>    m_deviceResources;
 	KennyKerr::Direct2D::Bitmap1            m_bmp;
 	KennyKerr::Direct2D::SolidColorBrush    m_black, m_red;
 
@@ -76,9 +55,6 @@ private:
 	// scene array
 	Tank::EnvironmentBody                   m_envs;
 	std::array<Tank::EnvType, 6>            m_envSequence;
-
-    // Rendering loop timer.
-    DX::StepTimer                           m_timer;
 
 	// sprite map
 	Tank::TankSpriteMapArray                m_tankSpriteMap;
