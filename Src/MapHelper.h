@@ -12,6 +12,10 @@ namespace Tank
 		Iron,
 		Wall,
 		Sea,
+	};
+
+	enum class SpriteType : unsigned char
+	{
 		Eager,
 		Born,
 		Player1,
@@ -21,11 +25,12 @@ namespace Tank
 	class MapHelper
 	{
 	public:
-		static EnvironmentBody ReadFromString(std::string str);
-		static void DeleteSpecialEnvs(EnvironmentBody& body);
-		static void SetPos4ToEnv(EnvironmentBody& body, int x, int y, bool isSmall, EnvType type);
+		static MapBody Deserialize(std::string str);
+		static std::string Serialize(MapBody body);
+		static void DeleteSpecialEnvs(MapBody& body);
+		static void SetPos4ToEnv(MapBody& body, int x, int y, bool isSmall, EnvType type);
 
-		static EnvironmentBody CreateBasic();
-		static EnvironmentBody CreateTest();
+		static MapBody CreateBasic();
+		static MapBody CreateTest();
 	};
 }

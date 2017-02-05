@@ -8,10 +8,11 @@ namespace Tank
 	const int GridCountDouble = GridCount * 2;
 	const float GridSize = GridUnitSize * GridCount;
 	enum class EnvType : unsigned char;
-	enum class TankSpriteType : unsigned char;
+	enum class SpriteType : unsigned char;
+	enum class TankSpriteUnit : unsigned char;
 	const int TankSpriteCount = 225;
 
-	typedef std::array<std::array<EnvType, GridCountDouble>, GridCountDouble> EnvironmentBody;
+	typedef std::array<std::array<EnvType, GridCountDouble>, GridCountDouble> MapBody;
 	typedef std::array<KennyKerr::RectF, TankSpriteCount> TankSpriteMapArray;
 
 	template <typename T, typename TMin, typename TMax>

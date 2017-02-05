@@ -161,6 +161,7 @@
   <ItemGroup>
     <ClCompile Include="..\Src\DeviceResources.cpp" />
     <ClCompile Include="..\Src\GameBase.cpp" />
+    <ClCompile Include="..\Src\MapEditor\MapStore.cpp" />
     <ClCompile Include="..\Src\MapHelper.cpp" />
     <ClCompile Include="..\Src\TankSprite.cpp" />
     <ClCompile Include="..\Src\WinMain.cpp" />
@@ -175,6 +176,7 @@
   <ItemGroup>
     <ClInclude Include="..\Src\DeviceResources.h" />
     <ClInclude Include="..\Src\GameBase.h" />
+    <ClInclude Include="..\Src\MapEditor\MapStore.h" />
     <ClInclude Include="..\Src\MapHelper.h" />
     <ClInclude Include="..\Src\pch.h" />
     <ClInclude Include="..\Src\MapEditor\MainScene.h" />

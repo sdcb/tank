@@ -2,7 +2,7 @@
 
 namespace Tank
 {
-	enum class TankSpriteType : unsigned char
+	enum class TankSpriteUnit : unsigned char
 	{
 		P1_1_L0,
 		P1_1_L1,
@@ -232,7 +232,7 @@ namespace Tank
 		Count,
 	};
 
-	TankSpriteType operator+(TankSpriteType left, int v);
+	TankSpriteUnit operator+(TankSpriteUnit left, int v);
 
-	std::array<KennyKerr::RectF, (size_t)TankSpriteType::Count> CreateTankSpriteMap();
+	std::array<KennyKerr::RectF, (size_t)TankSpriteUnit::Count> CreateTankSpriteMap();
 }

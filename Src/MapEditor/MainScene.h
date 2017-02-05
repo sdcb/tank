@@ -8,9 +8,8 @@
 #include "StepTimer.h"
 #include "PreDefined.h"
 #include "GameBase.h"
+#include "MapStore.h"
 #define PROJECT_NAME L"Map Editor"
-
-class BodyEnvType;
 
 
 // A basic game implementation that creates a D3D11 device and
@@ -31,14 +30,18 @@ private:
     void CreateDeviceResources() override;
     void CreateWindowSizeResources() override;
 
-	void DrawTankSprite(Tank::TankSpriteType id, KennyKerr::Point2F center);
+	void DrawUnit(Tank::TankSpriteUnit id, KennyKerr::Point2F center);
 	void DrawEnv(Tank::EnvType env, KennyKerr::Point2F topLeft);
 	void DrawEnv4(Tank::EnvType env, KennyKerr::Point2F topLeft);
-	void DrawEnvSelection();
+	void DrawSprite(Tank::SpriteType sprite, KennyKerr::Point2F topLeft);
+
 	KennyKerr::Point2F GetMousePos();
 	KennyKerr::Point2U GetMouseGridPos();
+
+	void DrawLeft();
+	void DrawRight();
 	void DrawMousePosText();
-	void DrawBodyEnv();
+	void DrawBody();
 	void DrawSpecialEnvironments();
 
     // Device resources.
@@ -53,7 +56,9 @@ private:
 	bool                                    m_small = false;
 
 	// scene array
-	Tank::EnvironmentBody                   m_envs;
+	Tank::MapBody                           m_map;
+	Tank::MapStore                          m_mapStore;
+	bool                                    m_mapClean;
 	std::array<Tank::EnvType, 6>            m_envSequence;
 
 	// sprite map

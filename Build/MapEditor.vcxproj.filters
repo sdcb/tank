@@ -25,6 +25,7 @@
     <ClCompile Include="..\Src\GameBase.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="..\Src\MapEditor\MapStore.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Src\DeviceResources.h">
@@ -49,5 +50,6 @@
     <ClInclude Include="..\Src\GameBase.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\Src\MapEditor\MapStore.h" />
   </ItemGroup>
 </Project>

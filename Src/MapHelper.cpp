@@ -5,15 +5,16 @@
 using namespace std;
 using namespace Tank;
 
-EnvType CharToEnvType(int v);
+EnvType CharToEnvType(char v);
+char    EnvTypeToChar(EnvType v);
 
-EnvironmentBody Tank::MapHelper::ReadFromString(std::string str)
+MapBody Tank::MapHelper::Deserialize(std::string str)
 {
 	str = regex_replace(str, regex{ R"(\r\n)" }, "");
 	if (str.size() != GridCountDouble * GridCountDouble)
 		throw exception{ "str is not 26x26." };
 
-	EnvironmentBody result;
+	MapBody result;
 	for (size_t i = 0; i < str.size(); ++i)
 	{
 		auto x = i % result.size();
@@ -25,7 +26,20 @@ EnvironmentBody Tank::MapHelper::ReadFromString(std::string str)
 	return result;
 }
 
-void Tank::MapHelper::DeleteSpecialEnvs(EnvironmentBody & body)
+std::string Tank::MapHelper::Serialize(MapBody body)
+{
+	std::string result;
+	for (size_t y = 0; y < body.size(); ++y)
+	{
+		for (size_t x = 0; x < body[y].size(); ++x)
+		{
+			result += EnvTypeToChar(body[y][x]);
+		}
+	}
+	return result;
+}
+
+void Tank::MapHelper::DeleteSpecialEnvs(MapBody & body)
 {
 	// eager
 	SetPos4ToEnv(body, GridCountDouble / 2 - 1, GridCountDouble - 2, false, EnvType::Empty);
@@ -34,9 +48,9 @@ void Tank::MapHelper::DeleteSpecialEnvs(EnvironmentBody & body)
 	SetPos4ToEnv(body, GridCountDouble / 2 + 3, GridCountDouble - 2, false, EnvType::Empty);
 }
 
-EnvironmentBody Tank::MapHelper::CreateBasic()
+MapBody Tank::MapHelper::CreateBasic()
 {
-	return ReadFromString(
+	return Deserialize(
 		"                          "
 		"                          "
 		"                          "
@@ -65,9 +79,9 @@ EnvironmentBody Tank::MapHelper::CreateBasic()
 		"           W  W           ");
 }
 
-EnvironmentBody Tank::MapHelper::CreateTest()
+MapBody Tank::MapHelper::CreateTest()
 {
-	return ReadFromString(
+	return Deserialize(
 		"  WWWWWWWWWW  WWWWWWWWWW  "
 		"  WWWWWWWWWW  WWWWWWWWWW  "
 		"WWWWWWWWWWWWWWWWWWWWWWWWWW"
@@ -96,7 +110,7 @@ EnvironmentBody Tank::MapHelper::CreateTest()
 		"WWWWWWWWWWWW  WFFFFFFFFFFF");
 }
 
-EnvType CharToEnvType(int v)
+EnvType CharToEnvType(char v)
 {
 	switch (v)
 	{
@@ -110,8 +124,6 @@ EnvType CharToEnvType(int v)
 		return EnvType::Iron;
 	case 'S':
 		return EnvType::Sea;
-	case 'E':
-		return EnvType::Eager;
 	case 'I':
 		return EnvType::Ice;
 	default:
@@ -119,7 +131,28 @@ EnvType CharToEnvType(int v)
 	}
 }
 
-void Tank::MapHelper::SetPos4ToEnv(EnvironmentBody& body, int x, int y, bool isSmall, EnvType type)
+char EnvTypeToChar(EnvType v)
+{
+	switch (v)
+	{
+	case EnvType::Empty:
+		return ' ';
+	case EnvType::Grass:
+		return 'G';
+	case EnvType::Wall:
+		return 'W';
+	case EnvType::Iron:
+		return 'F';
+	case EnvType::Sea:
+		return 'S';
+	case EnvType::Ice:
+		return 'I';
+	default:
+		throw exception{ "EnvType not supported." };
+	}
+}
+
+void Tank::MapHelper::SetPos4ToEnv(MapBody& body, int x, int y, bool isSmall, EnvType type)
 {
 	body[y][x] = type;
 	if (!isSmall)

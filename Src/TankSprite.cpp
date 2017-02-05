@@ -5,9 +5,9 @@ using namespace std;
 using namespace Tank;
 using KennyKerr::RectF;
 
-std::array<RectF, (size_t)TankSpriteType::Count> Tank::CreateTankSpriteMap()
+std::array<RectF, (size_t)TankSpriteUnit::Count> Tank::CreateTankSpriteMap()
 {
-	return array<RectF, (size_t)TankSpriteType::Count>
+	return array<RectF, (size_t)TankSpriteUnit::Count>
 	{
 		// P1
 		RectF{ 0.0f, 0.0f, 16.0f, 16.0f },
@@ -246,7 +246,7 @@ std::array<RectF, (size_t)TankSpriteType::Count> Tank::CreateTankSpriteMap()
 	};
 }
 
-TankSpriteType Tank::operator+(TankSpriteType left, int v)
+TankSpriteUnit Tank::operator+(TankSpriteUnit left, int v)
 {
-	return TankSpriteType((unsigned char)left + v);
+	return TankSpriteUnit((unsigned char)left + v);
 }

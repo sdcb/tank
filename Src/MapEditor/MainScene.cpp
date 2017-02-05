@@ -22,13 +22,13 @@ using Microsoft::WRL::ComPtr;
 
 Game::Game() :
 	m_tankSpriteMap(CreateTankSpriteMap()),
-	m_selectedEnv(EnvType::Empty), 
+	m_selectedEnv(EnvType::Empty),
 	m_envSequence(
-	{
-		EnvType::Empty, EnvType::Grass, EnvType::Ice, EnvType::Iron, EnvType::Sea, EnvType::Wall
-	})
 {
-	m_envs = MapHelper::CreateBasic();
+	EnvType::Empty, EnvType::Grass, EnvType::Ice, EnvType::Iron, EnvType::Sea, EnvType::Wall
+})
+{
+	m_map = m_mapStore.LoadMap(1);
 	m_textFormat = m_deviceResources->GetDWriteFactory().CreateTextFormat(L"Consolas", 12.0f);
 }
 
@@ -60,8 +60,9 @@ void Game::Draw(KennyKerr::Direct2D::DeviceContext target)
 {
 	target.SetTransform(m_world);
 	target.FillRectangle(RectF{ 0, 0, (float)GridSize, (float)GridSize }, m_black);
-	DrawEnvSelection();
-	DrawBodyEnv();
+	DrawLeft();
+	DrawBody();
+	DrawRight();
 	target.SetTransform(Matrix3x2F::Identity());
 	if (m_deviceResources->GetKeyboardState().Space)
 	{
@@ -78,7 +79,7 @@ void Game::CreateDeviceResources()
 
 	// TODO: Initialize device dependent objects here (independent of window size).
 	auto stream = wic.CreateStream();
-	HR(stream.InitializeFromFilename(L"All.png"));
+	HR(stream.InitializeFromFilename(L"All.png", GENERIC_READ));
 	auto decoder = wic.CreateFormatConverter();
 	decoder.Initialize(wic.CreateDecoderFromStream(stream).GetFrame());
 	m_bmp = target.CreateBitmapFromWicBitmap1(decoder);
@@ -100,7 +101,7 @@ void Game::CreateWindowSizeResources()
 		Matrix3x2F::Translation(offsetX, 0);
 }
 
-void Game::DrawTankSprite(TankSpriteType id, KennyKerr::Point2F topLeft)
+void Game::DrawUnit(TankSpriteUnit id, KennyKerr::Point2F topLeft)
 {
 #ifdef _DEBUG
 	if ((size_t)id > m_tankSpriteMap.size())
@@ -136,19 +137,19 @@ void Game::DrawEnv(EnvType env, KennyKerr::Point2F topLeft)
 		// do nothing;
 		return;
 	case EnvType::Grass:
-		DrawTankSprite(TankSpriteType::Env_Grass, topLeft);
+		DrawUnit(TankSpriteUnit::Env_Grass, topLeft);
 		return;
 	case EnvType::Ice:
-		DrawTankSprite(TankSpriteType::Env_Ice, topLeft);
+		DrawUnit(TankSpriteUnit::Env_Ice, topLeft);
 		break;
 	case EnvType::Iron:
-		DrawTankSprite(TankSpriteType::Env_Iron, topLeft);
+		DrawUnit(TankSpriteUnit::Env_Iron, topLeft);
 		break;
 	case EnvType::Sea:
-		DrawTankSprite(TankSpriteType::Env_Sea0 + m_timer.GetFrameCount() / 10 % 2, topLeft);
+		DrawUnit(TankSpriteUnit::Env_Sea0 + m_timer.GetFrameCount() / 10 % 2, topLeft);
 		break;
 	case EnvType::Wall:
-		DrawTankSprite(TankSpriteType::Env_Wall, topLeft);
+		DrawUnit(TankSpriteUnit::Env_Wall, topLeft);
 		break;
 	default:
 		throw exception("Env is not supported.");
@@ -157,107 +158,30 @@ void Game::DrawEnv(EnvType env, KennyKerr::Point2F topLeft)
 
 void Game::DrawEnv4(EnvType env, KennyKerr::Point2F topLeft)
 {
-	if (env == EnvType::Eager)
-	{
-		DrawTankSprite(TankSpriteType::Eager, topLeft);
-		return;
-	}
-	else if (env == EnvType::Born)
-	{
-		DrawTankSprite(TankSpriteType::Star_0 + m_timer.GetFrameCount() / 10 % 4, topLeft);
-	}
-	else if (env == EnvType::Player1)
-	{
-		DrawTankSprite(TankSpriteType::P1_1_U0 + m_timer.GetFrameCount() / 10 % 2, topLeft);
-	}
-	else if (env == EnvType::Player2)
-	{
-		DrawTankSprite(TankSpriteType::P2_1_U0 + m_timer.GetFrameCount() / 10 % 2, topLeft);
-	}
-	else
-	{
-		DrawEnv(env, topLeft);
-		DrawEnv(env, Point2F{ topLeft.X + GridUnitHalfSize, topLeft.Y });
-		DrawEnv(env, Point2F{ topLeft.X, topLeft.Y + GridUnitHalfSize });
-		DrawEnv(env, Point2F{ topLeft.X + GridUnitHalfSize, topLeft.Y + GridUnitHalfSize });
-	}
+	DrawEnv(env, topLeft);
+	DrawEnv(env, Point2F{ topLeft.X + GridUnitHalfSize, topLeft.Y });
+	DrawEnv(env, Point2F{ topLeft.X, topLeft.Y + GridUnitHalfSize });
+	DrawEnv(env, Point2F{ topLeft.X + GridUnitHalfSize, topLeft.Y + GridUnitHalfSize });
 }
 
-void Game::DrawEnvSelection()
+void Game::DrawSprite(Tank::SpriteType sprite, KennyKerr::Point2F topLeft)
 {
-	Point2F topLeft{ -GridUnitSize - 2.0f, 2.0f };
-
-	auto pos = GetMousePos();
-
-	for (size_t i = 0; i < m_envSequence.size(); ++i)
+	switch (sprite)
 	{
-		auto env = m_envSequence[i];
-		DirectX::SimpleMath::Rectangle rect
-		{
-			long(topLeft.X),
-			long(topLeft.Y),
-			long(GridUnitSize),
-			long(GridUnitSize)
-		};
-		if (rect.Contains(Vector2(pos.X, pos.Y)))
-		{
-			auto mouseState = m_deviceResources->GetMouseState();
-			if (mouseState.leftButton)
-			{
-				m_selectedEnv = env;
-				m_small = false;
-			}
-		}
-		DrawEnv4(env, topLeft);
-		if (!m_small && m_selectedEnv == env || rect.Contains(Vector2(pos.X, pos.Y)))
-		{
-			// draw selected
-			auto target = m_deviceResources->GetD2DDeviceContext();
-			auto rect = RectF
-			{
-				topLeft.X, topLeft.Y,
-				topLeft.X + GridUnitSize,
-				topLeft.Y + GridUnitSize
-			};
-			target.DrawRectangle(rect, m_red);
-		}
-
-		topLeft.Y += GridUnitSize + 2.0f;
-	}
-
-	for (size_t i = 0; i < m_envSequence.size(); ++i)
-	{
-		auto env = m_envSequence[i];
-		DirectX::SimpleMath::Rectangle rect
-		{
-			long(topLeft.X),
-			long(topLeft.Y),
-			long(GridUnitHalfSize),
-			long(GridUnitHalfSize)
-		};
-		if (rect.Contains(Vector2(pos.X, pos.Y)))
-		{
-			auto mouseState = m_deviceResources->GetMouseState();
-			if (mouseState.leftButton)
-			{
-				m_selectedEnv = env;
-				m_small = true;
-			}
-		}
-		DrawEnv(env, topLeft);
-		if (m_small && m_selectedEnv == env || rect.Contains(Vector2(pos.X, pos.Y)))
-		{
-			auto target = m_deviceResources->GetD2DDeviceContext();
-			auto rect = RectF
-			{
-				topLeft.X, topLeft.Y,
-				topLeft.X + GridUnitHalfSize,
-				topLeft.Y + GridUnitHalfSize
-			};
-			target.DrawRectangle(rect, m_red);
-		}
-
-		topLeft.Y += GridUnitHalfSize + 2.0f;
+	case SpriteType::Eager:
+		DrawUnit(TankSpriteUnit::Eager, topLeft);
+		break;
+	case SpriteType::Born:
+		DrawUnit(TankSpriteUnit::Star_0 + m_timer.GetFrameCount() / 10 % 4, topLeft);
+		break;
+	case SpriteType::Player1:
+		DrawUnit(TankSpriteUnit::P1_1_U0 + m_timer.GetFrameCount() / 10 % 2, topLeft);
+		break;
+	case SpriteType::Player2:
+		DrawUnit(TankSpriteUnit::P2_1_U0 + m_timer.GetFrameCount() / 10 % 2, topLeft);
+		break;
+	default:
+		throw exception{ "Unkonwn sprite type." };
 	}
 }
 
@@ -295,7 +219,56 @@ void Game::DrawMousePosText()
 	target.DrawText(str.c_str(), str.size(), m_textFormat, rect, m_red);
 }
 
-void Game::DrawBodyEnv()
+void Game::DrawLeft()
+{
+	Point2F topLeft{ -GridUnitSize - 2.0f, 2.0f };
+
+	auto pos = GetMousePos();
+
+	auto HandleEnvs = [&](bool isSmall) {
+		for (size_t i = 0; i < m_envSequence.size(); ++i)
+		{
+			auto env = m_envSequence[i];
+			auto size = isSmall ? GridUnitHalfSize : GridUnitSize;
+
+			DirectX::SimpleMath::Rectangle rect
+			{
+				long(topLeft.X),
+				long(topLeft.Y),
+				long(size),
+				long(size)
+			};
+			if (rect.Contains(Vector2(pos.X, pos.Y)))
+			{
+				auto mouseState = m_deviceResources->GetMouseState();
+				if (mouseState.leftButton)
+				{
+					m_selectedEnv = env;
+					m_small = isSmall;
+				}
+			}
+ 			isSmall ? DrawEnv(env, topLeft) : DrawEnv4(env, topLeft);
+			if ((isSmall == m_small) && m_selectedEnv == env || rect.Contains(Vector2(pos.X, pos.Y)))
+			{
+				// draw selected
+				auto target = m_deviceResources->GetD2DDeviceContext();
+				auto rect = RectF
+				{
+					topLeft.X, topLeft.Y,
+					topLeft.X + size,
+					topLeft.Y + size
+				};
+				target.DrawRectangle(rect, m_red);
+			}
+
+			topLeft.Y += size + 2.0f;
+		}
+	};
+	HandleEnvs(false);
+	HandleEnvs(true);
+}
+
+void Game::DrawBody()
 {
 	auto mouseState = m_deviceResources->GetMouseState();
 	auto gridPos = GetMouseGridPos();
@@ -306,12 +279,13 @@ void Game::DrawBodyEnv()
 	if (mouseState.leftButton && cursorInBody)
 	{
 		// cursor click
-		MapHelper::SetPos4ToEnv(m_envs, gridPos.X, gridPos.Y, m_small, m_selectedEnv);
+		MapHelper::SetPos4ToEnv(m_map, gridPos.X, gridPos.Y, m_small, m_selectedEnv);
+		m_mapClean = false;
 	}
 
 	auto target = m_deviceResources->GetD2DDeviceContext();
-	auto localEnv = m_envs;
-	MapHelper::DeleteSpecialEnvs(m_envs);
+	auto localEnv = m_map;
+	MapHelper::DeleteSpecialEnvs(m_map);
 
 	// cursor environment
 	MapHelper::SetPos4ToEnv(localEnv, gridPos.X, gridPos.Y, m_small, m_selectedEnv);
@@ -346,32 +320,38 @@ void Game::DrawBodyEnv()
 	}
 }
 
+void Game::DrawRight()
+{
+	auto target = m_deviceResources->GetD2DDeviceContext();
+	DrawSprite(SpriteType::Player1, Point2F{ GridSize + 2.0f, 2.0f });
+}
+
 void Game::DrawSpecialEnvironments()
 {
 	// born
-	DrawEnv4(EnvType::Born, Point2F
+	DrawSprite(SpriteType::Born, Point2F
 	{
 		0, 0
 	});
-	DrawEnv4(EnvType::Born, Point2F
+	DrawSprite(SpriteType::Born, Point2F
 	{
 		GridUnitHalfSize * (GridCountDouble / 2 - 1), 0
 	});
-	DrawEnv4(EnvType::Born, Point2F
+	DrawSprite(SpriteType::Born, Point2F
 	{
 		GridUnitHalfSize * (GridCountDouble - 2), 0
 	});
 	// player born 1-2
-	DrawEnv4(EnvType::Player1, Point2F
+	DrawSprite(SpriteType::Player1, Point2F
 	{
 		GridUnitHalfSize * (GridCountDouble / 2 - 5), GridUnitHalfSize * (GridCountDouble - 2)
 	});
-	DrawEnv4(EnvType::Player2, Point2F
+	DrawSprite(SpriteType::Player2, Point2F
 	{
 		GridUnitHalfSize * (GridCountDouble / 2 + 3), GridUnitHalfSize * (GridCountDouble - 2)
 	});
 	// center eager
-	DrawEnv4(EnvType::Eager, Point2F
+	DrawSprite(SpriteType::Eager, Point2F
 	{
 		GridUnitHalfSize * (GridCountDouble / 2 - 1),
 		GridUnitHalfSize * (GridCountDouble - 2),
