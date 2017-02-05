@@ -77,6 +77,7 @@ private:
 
 	// scene array
 	EnvironmentBody                         m_envs;
+	std::array<EnvType, 6>                  m_envSequence;
 
     // Rendering loop timer.
     DX::StepTimer                           m_timer;

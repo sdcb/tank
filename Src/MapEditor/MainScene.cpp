@@ -21,7 +21,11 @@ using Microsoft::WRL::ComPtr;
 
 Game::Game() :
 	m_tankSpriteMap(CreateTankSpriteMap()),
-	m_selectedEnv(EnvType::Empty)
+	m_selectedEnv(EnvType::Empty), 
+	m_envSequence(
+	{
+		EnvType::Empty, EnvType::Grass, EnvType::Ice, EnvType::Iron, EnvType::Sea, EnvType::Wall
+	})
 {
 	m_deviceResources = std::make_unique<DX::DeviceResources>();
 	m_deviceResources->RegisterDeviceNotify(this);
@@ -64,9 +68,24 @@ void Game::Tick()
 void Game::Update(DX::StepTimer const& timer)
 {
 	float elapsedTime = float(timer.GetElapsedSeconds());
+	auto keyboardState = m_deviceResources->GetKeyboardState();
 
 	// TODO: Add your game logic here.
-	elapsedTime;
+	for (size_t i = 0; i < m_envSequence.size(); ++i)
+	{
+		if (keyboardState.IsKeyDown(Keyboard::Keys(Keyboard::D1 + i)))
+		{
+			m_selectedEnv = m_envSequence[i];
+		}
+	}
+	if (keyboardState.IsKeyDown(Keyboard::F1))
+	{
+		m_small = false;
+	}
+	if (keyboardState.IsKeyDown(Keyboard::F2))
+	{
+		m_small = true;
+	}
 }
 #pragma endregion
 
@@ -292,23 +311,13 @@ void Game::DrawEnv4(EnvType env, KennyKerr::Point2F topLeft)
 
 void Game::DrawEnvSelection()
 {
-	vector<EnvType> envs =
-	{
-		EnvType::Empty,
-		EnvType::Grass,
-		EnvType::Ice,
-		EnvType::Iron,
-		EnvType::Sea,
-		EnvType::Wall,
-	};
-
 	Point2F topLeft{ -GridUnitSize - 2.0f, 2.0f };
 
 	auto pos = GetMousePos();
 
-	for (size_t i = 0; i < envs.size(); ++i)
+	for (size_t i = 0; i < m_envSequence.size(); ++i)
 	{
-		auto env = envs[i];
+		auto env = m_envSequence[i];
 		DirectX::SimpleMath::Rectangle rect
 		{
 			long(topLeft.X),
@@ -342,9 +351,9 @@ void Game::DrawEnvSelection()
 		topLeft.Y += GridUnitSize + 2.0f;
 	}
 
-	for (size_t i = 0; i < envs.size(); ++i)
+	for (size_t i = 0; i < m_envSequence.size(); ++i)
 	{
-		auto env = envs[i];
+		auto env = m_envSequence[i];
 		DirectX::SimpleMath::Rectangle rect
 		{
 			long(topLeft.X),
