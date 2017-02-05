@@ -9,8 +9,6 @@
 #include "PreDefined.h"
 #define PROJECT_NAME L"Map Editor"
 
-enum class EnvType : unsigned char;
-
 class BodyEnvType;
 
 
@@ -53,9 +51,9 @@ private:
     void CreateDeviceDependentResources();
     void CreateWindowSizeDependentResources();
 
-	void DrawTankSprite(TankSpriteType id, KennyKerr::Point2F center);
-	void DrawEnv(EnvType env, KennyKerr::Point2F topLeft);
-	void DrawEnv4(EnvType env, KennyKerr::Point2F topLeft);
+	void DrawTankSprite(Tank::TankSpriteType id, KennyKerr::Point2F center);
+	void DrawEnv(Tank::EnvType env, KennyKerr::Point2F topLeft);
+	void DrawEnv4(Tank::EnvType env, KennyKerr::Point2F topLeft);
 	void DrawEnvSelection();
 	KennyKerr::Point2F GetMousePos();
 	KennyKerr::Point2U GetMouseGridPos();
@@ -72,18 +70,18 @@ private:
 	KennyKerr::DirectWrite::TextFormat      m_textFormat;
 
 	// selected environment type
-	EnvType                                 m_selectedEnv;
+	Tank::EnvType                           m_selectedEnv;
 	bool                                    m_small = false;
 
 	// scene array
-	EnvironmentBody                         m_envs;
-	std::array<EnvType, 6>                  m_envSequence;
+	Tank::EnvironmentBody                   m_envs;
+	std::array<Tank::EnvType, 6>            m_envSequence;
 
     // Rendering loop timer.
     DX::StepTimer                           m_timer;
 
 	// sprite map
-	TankSpriteMapArray                      m_tankSpriteMap;
+	Tank::TankSpriteMapArray                m_tankSpriteMap;
 
 	// scale
 	D2D1::Matrix3x2F                        m_world;

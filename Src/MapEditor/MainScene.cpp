@@ -5,11 +5,12 @@
 #include "pch.h"
 #include "MainScene.h"
 #include "TankSprite.h"
-#include "Environment.h"
+#include "MapHelper.h"
 
 extern void ExitGame();
 
 using namespace std;
+using namespace Tank;
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 using namespace KennyKerr;
@@ -29,7 +30,7 @@ Game::Game() :
 {
 	m_deviceResources = std::make_unique<DX::DeviceResources>();
 	m_deviceResources->RegisterDeviceNotify(this);
-	m_envs = CreateBasicEnv();
+	m_envs = MapHelper::CreateBasic();
 }
 
 // Initialize the Direct3D resources required to run.
@@ -432,15 +433,15 @@ void Game::DrawBodyEnv()
 	if (mouseState.leftButton && cursorInBody)
 	{
 		// cursor click
-		SetPos4ToEnv(m_envs, gridPos.X, gridPos.Y, m_small, m_selectedEnv);
+		MapHelper::SetPos4ToEnv(m_envs, gridPos.X, gridPos.Y, m_small, m_selectedEnv);
 	}
 
 	auto target = m_deviceResources->GetD2DDeviceContext();
 	auto localEnv = m_envs;
-	DeleteSpecialEnvironments(m_envs);
+	MapHelper::DeleteSpecialEnvs(m_envs);
 
 	// cursor environment
-	SetPos4ToEnv(localEnv, gridPos.X, gridPos.Y, m_small, m_selectedEnv);
+	MapHelper::SetPos4ToEnv(localEnv, gridPos.X, gridPos.Y, m_small, m_selectedEnv);
 
 	DrawSpecialEnvironments();
 

@@ -1,32 +1,15 @@
 #include "pch.h"
-#include "Environment.h"
+#include "MapHelper.h"
+#include <regex>
 
 using namespace std;
+using namespace Tank;
 
 EnvType CharToEnvType(int v);
 
-EnvironmentBody ReadEnvFromString4(std::string str)
+EnvironmentBody Tank::MapHelper::ReadFromString(std::string str)
 {
-	if (str.size() != GridCount * GridCount)
-		throw exception{ "str is not 13x13." };
-
-	EnvironmentBody result;
-	for (size_t i = 0; i < str.size(); ++i)
-	{
-		auto x = i % GridCount;
-		auto y = i / GridCount;
-
-		auto v = CharToEnvType(str[i]);
-		result[y * 2][x * 2] = v;
-		result[y * 2][x * 2 + 1] = v;
-		result[y * 2 + 1][x * 2] = v;
-		result[y * 2 + 1][x * 2 + 1] = v;
-	}
-	return result;
-}
-
-EnvironmentBody ReadEnvFromString(std::string str)
-{
+	str = regex_replace(str, regex{ R"(\r\n)" }, "");
 	if (str.size() != GridCountDouble * GridCountDouble)
 		throw exception{ "str is not 26x26." };
 
@@ -42,7 +25,7 @@ EnvironmentBody ReadEnvFromString(std::string str)
 	return result;
 }
 
-void DeleteSpecialEnvironments(EnvironmentBody & body)
+void Tank::MapHelper::DeleteSpecialEnvs(EnvironmentBody & body)
 {
 	// eager
 	SetPos4ToEnv(body, GridCountDouble / 2 - 1, GridCountDouble - 2, false, EnvType::Empty);
@@ -51,9 +34,40 @@ void DeleteSpecialEnvironments(EnvironmentBody & body)
 	SetPos4ToEnv(body, GridCountDouble / 2 + 3, GridCountDouble - 2, false, EnvType::Empty);
 }
 
-EnvironmentBody CreateBasicEnv()
+EnvironmentBody Tank::MapHelper::CreateBasic()
 {
-	return ReadEnvFromString(
+	return ReadFromString(
+		"                          "
+		"                          "
+		"                          "
+		"                          "
+		"                          "
+		"                          "
+		"                          "
+		"                          "
+		"                          "
+		"                          "
+		"                          "
+		"                          "
+		"                          "
+		"                          "
+		"                          "
+		"                          "
+		"                          "
+		"                          "
+		"                          "
+		"                          "
+		"                          "
+		"                          "
+		"                          "
+		"           WWWW           "
+		"           W  W           "
+		"           W  W           ");
+}
+
+EnvironmentBody Tank::MapHelper::CreateTest()
+{
+	return ReadFromString(
 		"  WWWWWWWWWW  WWWWWWWWWW  "
 		"  WWWWWWWWWW  WWWWWWWWWW  "
 		"WWWWWWWWWWWWWWWWWWWWWWWWWW"
@@ -105,8 +119,7 @@ EnvType CharToEnvType(int v)
 	}
 }
 
-
-void SetPos4ToEnv(EnvironmentBody& body, int x, int y, bool isSmall, EnvType type)
+void Tank::MapHelper::SetPos4ToEnv(EnvironmentBody& body, int x, int y, bool isSmall, EnvType type)
 {
 	body[y][x] = type;
 	if (!isSmall)
