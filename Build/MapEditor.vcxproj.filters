@@ -19,7 +19,9 @@
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="..\Src\MapEditor\MainScene.cpp" />
-    <ClCompile Include="..\Src\MapEditor\MapHelper.cpp" />
+    <ClCompile Include="..\Src\MapHelper.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Src\DeviceResources.h">
@@ -38,6 +40,8 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="..\Src\MapEditor\MainScene.h" />
-    <ClInclude Include="..\Src\MapEditor\MapHelper.h" />
+    <ClInclude Include="..\Src\MapHelper.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

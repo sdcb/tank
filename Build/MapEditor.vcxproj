@@ -160,7 +160,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Src\DeviceResources.cpp" />
-    <ClCompile Include="..\Src\MapEditor\MapHelper.cpp" />
+    <ClCompile Include="..\Src\MapHelper.cpp" />
     <ClCompile Include="..\Src\TankSprite.cpp" />
     <ClCompile Include="..\Src\WinMain.cpp" />
     <ClCompile Include="..\Src\pch.cpp">
@@ -173,7 +173,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Src\DeviceResources.h" />
-    <ClInclude Include="..\Src\MapEditor\MapHelper.h" />
+    <ClInclude Include="..\Src\MapHelper.h" />
     <ClInclude Include="..\Src\pch.h" />
     <ClInclude Include="..\Src\MapEditor\MainScene.h" />
     <ClInclude Include="..\Src\PreDefined.h" />
