@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Common">
-      <UniqueIdentifier>{e3e17580-0a53-484c-9033-2ff4de72fd79}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
+    <ClCompile Include="..\Src\MapEditor\MapStore.cpp" />
+    <ClCompile Include="..\Src\MapEditor\MainScene.cpp" />
     <ClCompile Include="..\Src\DeviceResources.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\Src\WinMain.cpp">
+    <ClCompile Include="..\Src\GameBase.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\MapHelper.cpp">
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="..\Src\pch.cpp">
@@ -18,20 +18,27 @@
     <ClCompile Include="..\Src\TankSprite.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\Src\MapEditor\MainScene.cpp" />
-    <ClCompile Include="..\Src\MapHelper.cpp">
+    <ClCompile Include="..\Src\WinMain.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\Src\GameBase.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Src\MapEditor\MapStore.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Src\MapEditor\MapStore.h" />
+    <ClInclude Include="..\Src\MapEditor\SpriteType.h" />
+    <ClInclude Include="..\Src\MapEditor\MainScene.h" />
     <ClInclude Include="..\Src\DeviceResources.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\Src\GameBase.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\MapHelper.h">
+      <Filter>Common</Filter>
+    </ClInclude>
     <ClInclude Include="..\Src\pch.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\PreDefined.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="..\Src\StepTimer.h">
@@ -40,17 +47,10 @@
     <ClInclude Include="..\Src\TankSprite.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\Src\PreDefined.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Src\MapEditor\MainScene.h" />
-    <ClInclude Include="..\Src\MapHelper.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Src\GameBase.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Src\MapEditor\MapStore.h" />
-    <ClInclude Include="..\Src\MapEditor\SpriteType.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>{bf70cfa3-9f66-4404-9e45-b7dbe6137582}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
