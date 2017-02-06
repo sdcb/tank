@@ -40,6 +40,11 @@ private:
 	void DrawSprite(Tank::SpriteType sprite, KennyKerr::Point2F topLeft);
 	void AddClickHandler(KennyKerr::Point2F topLeft, float size, std::function<void()> clickHandler);
 
+	// map functions
+	void GoNextMap();
+	void GoPrevMap();
+	void SaveMap();
+
 	void DrawLeft();
 	void DrawRight();
 	void DrawBody();

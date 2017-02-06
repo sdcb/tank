@@ -63,20 +63,18 @@ void Game::Update(DX::StepTimer const& timer)
 	{
 		m_small = true;
 	}
+
 	if (m_keyboardState.Right && m_timer.GetFrameCount() % 7 == 0)
 	{
-		m_mapId = clamp(m_mapId + 1, 1, INFINITE);
-		m_map = m_mapStore.LoadMap(m_mapId);
+		GoNextMap();
 	}
 	else if (m_keyboardState.Left && m_timer.GetFrameCount() % 7 == 0)
 	{
-		m_mapId = clamp(m_mapId - 1, 1, INFINITE);
-		m_map = m_mapStore.LoadMap(m_mapId);
+		GoPrevMap();
 	}
 	if (m_keyboardState.Enter)
 	{
-		m_mapStore.SaveMap(m_mapId, m_map);
-		m_pendingSave = false;
+		SaveMap();
 	}
 }
 
@@ -226,6 +224,24 @@ void Game::AddClickHandler(KennyKerr::Point2F topLeft, float size, std::function
 	}
 }
 
+void Game::GoNextMap()
+{
+	m_mapId = clamp(m_mapId + 1, 1, INFINITE);
+	m_map = m_mapStore.LoadMap(m_mapId);
+}
+
+void Game::GoPrevMap()
+{
+	m_mapId = clamp(m_mapId - 1, 1, INFINITE);
+	m_map = m_mapStore.LoadMap(m_mapId);
+}
+
+void Game::SaveMap()
+{
+	m_mapStore.SaveMap(m_mapId, m_map);
+	m_pendingSave = false;
+}
+
 void Game::DrawLeft()
 {
 	Point2F topLeft{ -GridUnitSize - 2.0f, 2.0f };
@@ -326,26 +342,17 @@ void Game::DrawRight()
 	MoveOffset();	
 
 	DrawSprite(SpriteType::Left, topLeft);
-	AddClickHandler(topLeft, GridUnitSize, [&]() {
-		m_mapId = clamp(m_mapId - 1, 1, INFINITE);
-		m_map = m_mapStore.LoadMap(m_mapId);
-	});
+	AddClickHandler(topLeft, GridUnitSize, bind(&Game::GoPrevMap, this));
 	MoveOffset();
 
 	DrawSprite(SpriteType::Right, topLeft); 
-	AddClickHandler(topLeft, GridUnitSize, [&]() {
-		m_mapId = clamp(m_mapId + 1, 1, INFINITE);
-		m_map = m_mapStore.LoadMap(m_mapId);
-	});
+	AddClickHandler(topLeft, GridUnitSize, bind(&Game::GoNextMap, this));
 	MoveOffset();
 
 	if (m_pendingSave)
 	{
 		DrawSprite(SpriteType::Player2, topLeft); 
-		AddClickHandler(topLeft, GridUnitSize, [&]() {
-			m_mapStore.SaveMap(m_mapId, m_map);
-			m_pendingSave = false;
-		});
+		AddClickHandler(topLeft, GridUnitSize, bind(&Game::SaveMap, this));
 		MoveOffset();
 	}
 }
