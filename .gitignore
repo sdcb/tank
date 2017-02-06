@@ -38,3 +38,8 @@
 \Release
 /Asset/All.png
 /tank.VC.VC.opendb
+tank.db
+/.vs/tank/v15
+/Bin
+/Build/Release
+/Build/Debug

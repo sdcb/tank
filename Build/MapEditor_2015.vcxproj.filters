@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\Src\MapEditor\MapStore.cpp" />
+    <ClCompile Include="..\Src\MapEditor\MainScene.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Src\MapEditor\MapStore.h" />
+    <ClInclude Include="..\Src\MapEditor\SpriteType.h" />
+    <ClInclude Include="..\Src\MapEditor\MainScene.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>{bf70cfa3-9f66-4404-9e45-b7dbe6137582}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
