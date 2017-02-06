@@ -177,6 +177,7 @@
     <ClInclude Include="..\Src\DeviceResources.h" />
     <ClInclude Include="..\Src\GameBase.h" />
     <ClInclude Include="..\Src\MapEditor\MapStore.h" />
+    <ClInclude Include="..\Src\MapEditor\SpriteType.h" />
     <ClInclude Include="..\Src\MapHelper.h" />
     <ClInclude Include="..\Src\pch.h" />
     <ClInclude Include="..\Src\MapEditor\MainScene.h" />

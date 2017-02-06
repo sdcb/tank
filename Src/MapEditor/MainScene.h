@@ -11,6 +11,10 @@
 #include "MapStore.h"
 #define PROJECT_NAME L"Map Editor"
 
+namespace Tank
+{
+	enum class SpriteType : unsigned char;
+}
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -34,6 +38,7 @@ private:
 	void DrawEnv(Tank::EnvType env, KennyKerr::Point2F topLeft);
 	void DrawEnv4(Tank::EnvType env, KennyKerr::Point2F topLeft);
 	void DrawSprite(Tank::SpriteType sprite, KennyKerr::Point2F topLeft);
+	void AddClickHandler(KennyKerr::Point2F topLeft, float size, std::function<void()> clickHandler);
 
 	void DrawLeft();
 	void DrawRight();
@@ -52,6 +57,7 @@ private:
 	bool                                    m_small;
 
 	// scene array
+	int                                     m_mapId;
 	Tank::MapBody                           m_map;
 	Tank::MapStore                          m_mapStore;
 	bool                                    m_pendingSave;

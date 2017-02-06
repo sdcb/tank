@@ -8,7 +8,6 @@ namespace Tank
 	const int GridCountDouble = GridCount * 2;
 	const float GridSize = GridUnitSize * GridCount;
 	enum class EnvType : unsigned char;
-	enum class SpriteType : unsigned char;
 	enum class TankSpriteUnit : unsigned char;
 	const int TankSpriteCount = 225;
 
@@ -18,8 +17,8 @@ namespace Tank
 	template <typename T, typename TMin, typename TMax>
 	T clamp(T v, TMin min, TMax max)
 	{
-		if (v < min) return (T)min;
-		if (v > max) return (T)max;
+		if ((TMin)v < min) return (T)min;
+		if ((TMax)v > max) return (T)max;
 		return v;
 	}
 }
