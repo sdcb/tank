@@ -7,6 +7,7 @@
 #include "TankSprite.h"
 #include "MapHelper.h"
 #include "SpriteType.h"
+#include "TankDialog.h"
 
 extern void ExitGame();
 
@@ -28,7 +29,7 @@ RectF MakeRectSquareByWH(Point2F topLeft, float width);
 Rectangle MakeRectangleSquareByWH(Point2F topLeft, float width);
 
 Game::Game() :
-	m_mapId(1), 
+	m_mapId(1),
 	m_tankSpriteMap(CreateTankSpriteMap()),
 	m_selectedEnv(EnvType::Empty),
 	m_envSequence(
@@ -66,11 +67,11 @@ void Game::Update(DX::StepTimer const& timer)
 
 	if (m_keyboardState.Right && m_timer.GetFrameCount() % 7 == 0)
 	{
-		GoNextMap();
+		GoOffsetMap(1);
 	}
 	else if (m_keyboardState.Left && m_timer.GetFrameCount() % 7 == 0)
 	{
-		GoPrevMap();
+		GoOffsetMap(-1);
 	}
 	if (m_keyboardState.Enter)
 	{
@@ -120,13 +121,6 @@ void Game::CreateWindowSizeResources()
 
 void Game::DrawUnit(TankSpriteUnit id, KennyKerr::Point2F topLeft)
 {
-#ifdef _DEBUG
-	if ((size_t)id > m_tankSpriteMap.size())
-	{
-		// asset not found.
-		DebugBreak();
-	}
-#endif
 	auto imagePos = m_tankSpriteMap[(size_t)id];
 	RectF source
 	{
@@ -224,16 +218,15 @@ void Game::AddClickHandler(KennyKerr::Point2F topLeft, float size, std::function
 	}
 }
 
-void Game::GoNextMap()
+void Game::GoOffsetMap(int offset)
 {
-	m_mapId = clamp(m_mapId + 1, 1, INFINITE);
+	if (m_pendingSave && !TankDialog::Confirm(L"尚未保存，确定要放弃已编辑的地图吗？"))
+	{
+		return;
+	}
+	m_mapId = clamp(m_mapId + offset, 1, INFINITE);
 	m_map = m_mapStore.LoadMap(m_mapId);
-}
-
-void Game::GoPrevMap()
-{
-	m_mapId = clamp(m_mapId - 1, 1, INFINITE);
-	m_map = m_mapStore.LoadMap(m_mapId);
+	m_pendingSave = false;
 }
 
 void Game::SaveMap()
@@ -338,20 +331,20 @@ void Game::DrawRight()
 	auto MoveOffset = [&topLeft]() { topLeft.Y += GridUnitSize + 2.0f; };
 
 	auto levelStr = fmt::format(L"L{0}", m_mapId);
-	target.DrawText(levelStr.c_str(), levelStr.size(), m_textFormat, MakeRectSquareByWH(topLeft, 800), m_red);
-	MoveOffset();	
-
-	DrawSprite(SpriteType::Left, topLeft);
-	AddClickHandler(topLeft, GridUnitSize, bind(&Game::GoPrevMap, this));
+	target.DrawText(levelStr.c_str(), levelStr.size(), m_textFormat, MakeRectSquareByWH(topLeft, 800), m_black);
 	MoveOffset();
 
-	DrawSprite(SpriteType::Right, topLeft); 
-	AddClickHandler(topLeft, GridUnitSize, bind(&Game::GoNextMap, this));
+	DrawSprite(SpriteType::Left, topLeft);
+	AddClickHandler(topLeft, GridUnitSize, bind(&Game::GoOffsetMap, this, -1));
+	MoveOffset();
+
+	DrawSprite(SpriteType::Right, topLeft);
+	AddClickHandler(topLeft, GridUnitSize, bind(&Game::GoOffsetMap, this, 1));
 	MoveOffset();
 
 	if (m_pendingSave)
 	{
-		DrawSprite(SpriteType::Player2, topLeft); 
+		DrawSprite(SpriteType::Player2, topLeft);
 		AddClickHandler(topLeft, GridUnitSize, bind(&Game::SaveMap, this));
 		MoveOffset();
 	}

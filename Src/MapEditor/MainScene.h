@@ -41,8 +41,7 @@ private:
 	void AddClickHandler(KennyKerr::Point2F topLeft, float size, std::function<void()> clickHandler);
 
 	// map functions
-	void GoNextMap();
-	void GoPrevMap();
+	void GoOffsetMap(int offset);
 	void SaveMap();
 
 	void DrawLeft();
