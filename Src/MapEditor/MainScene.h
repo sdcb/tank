@@ -35,12 +35,8 @@ private:
 	void DrawEnv4(Tank::EnvType env, KennyKerr::Point2F topLeft);
 	void DrawSprite(Tank::SpriteType sprite, KennyKerr::Point2F topLeft);
 
-	KennyKerr::Point2F GetMousePos();
-	KennyKerr::Point2U GetMouseGridPos();
-
 	void DrawLeft();
 	void DrawRight();
-	void DrawMousePosText();
 	void DrawBody();
 	void DrawSpecialEnvironments();
 
@@ -53,13 +49,17 @@ private:
 
 	// selected environment type
 	Tank::EnvType                           m_selectedEnv;
-	bool                                    m_small = false;
+	bool                                    m_small;
 
 	// scene array
 	Tank::MapBody                           m_map;
 	Tank::MapStore                          m_mapStore;
-	bool                                    m_mapClean;
+	bool                                    m_pendingSave;
 	std::array<Tank::EnvType, 6>            m_envSequence;
+
+	// input states
+	DirectX::Keyboard::State                m_keyboardState;
+	DirectX::Mouse::State                   m_mouseState;
 
 	// sprite map
 	Tank::TankSpriteMapArray                m_tankSpriteMap;

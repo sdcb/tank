@@ -20,6 +20,12 @@ using D2D1::ColorF;
 using D2D1::Matrix3x2F;
 using Microsoft::WRL::ComPtr;
 
+bool IsMouseInSprite(Point2F mousePos, Point2F spriteTopLeft, float spriteSize = GridUnitSize);
+Point2F GetMousePos(const Mouse::State& mouseState, Matrix3x2F world);
+Point2U GetMouseGridPos(Point2F mousePos);
+RectF MakeRectSquareByWH(Point2F topLeft, float width);
+Rectangle MakeRectangleSquareByWH(Point2F topLeft, float width);
+
 Game::Game() :
 	m_tankSpriteMap(CreateTankSpriteMap()),
 	m_selectedEnv(EnvType::Empty),
@@ -36,21 +42,22 @@ Game::Game() :
 void Game::Update(DX::StepTimer const& timer)
 {
 	float elapsedTime = float(timer.GetElapsedSeconds());
-	auto keyboardState = m_deviceResources->GetKeyboardState();
+	m_keyboardState = m_deviceResources->GetKeyboardState();
+	m_mouseState = m_deviceResources->GetMouseState();
 
 	// TODO: Add your game logic here.
 	for (size_t i = 0; i < m_envSequence.size(); ++i)
 	{
-		if (keyboardState.IsKeyDown(Keyboard::Keys(Keyboard::D1 + i)))
+		if (m_keyboardState.IsKeyDown(Keyboard::Keys(Keyboard::D1 + i)))
 		{
 			m_selectedEnv = m_envSequence[i];
 		}
 	}
-	if (keyboardState.IsKeyDown(Keyboard::F1))
+	if (m_keyboardState.IsKeyDown(Keyboard::F1))
 	{
 		m_small = false;
 	}
-	if (keyboardState.IsKeyDown(Keyboard::F2))
+	if (m_keyboardState.IsKeyDown(Keyboard::F2))
 	{
 		m_small = true;
 	}
@@ -63,11 +70,6 @@ void Game::Draw(KennyKerr::Direct2D::DeviceContext target)
 	DrawLeft();
 	DrawBody();
 	DrawRight();
-	target.SetTransform(Matrix3x2F::Identity());
-	if (m_deviceResources->GetKeyboardState().Space)
-	{
-		DrawMousePosText();
-	}
 }
 
 // These are the resources that depend on the device.
@@ -118,7 +120,7 @@ void Game::DrawUnit(TankSpriteUnit id, KennyKerr::Point2F topLeft)
 		imagePos.Right,
 		imagePos.Bottom
 	};
-	RectF destination
+	RectF destination 
 	{
 		topLeft.X,
 		topLeft.Y,
@@ -185,45 +187,11 @@ void Game::DrawSprite(Tank::SpriteType sprite, KennyKerr::Point2F topLeft)
 	}
 }
 
-KennyKerr::Point2F Game::GetMousePos()
-{
-	auto worldCopy = Matrix3x2F(m_world);
-	ASSERT(worldCopy.Invert());
-	auto mouseState = m_deviceResources->GetMouseState();
-	return worldCopy.TransformPoint({ (float)mouseState.x, (float)mouseState.y });
-}
-
-KennyKerr::Point2U Game::GetMouseGridPos()
-{
-	auto mousePos = GetMousePos();
-	Point2U gridPos
-	{
-		(unsigned int)clamp(mousePos.X / GridUnitHalfSize, 0, GridCountDouble - 1),
-		(unsigned int)clamp(mousePos.Y / GridUnitHalfSize, 0, GridCountDouble - 1)
-	};
-	return gridPos;
-}
-
-void Game::DrawMousePosText()
-{
-	auto target = m_deviceResources->GetD2DDeviceContext();
-
-	auto size = target.GetSize();
-	auto rect = RectF{ 0, 0, size.Width, size.Height };
-
-	auto pos = GetMousePos();
-	auto gridPos = GetMouseGridPos();
-	auto str = fmt::format(L"pos: ({0}, {1})\r\n", pos.X, pos.Y);
-	str += fmt::format(L"grid: ({0}, {1})", gridPos.X, gridPos.Y);
-
-	target.DrawText(str.c_str(), str.size(), m_textFormat, rect, m_red);
-}
-
 void Game::DrawLeft()
 {
 	Point2F topLeft{ -GridUnitSize - 2.0f, 2.0f };
 
-	auto pos = GetMousePos();
+	auto pos = GetMousePos(m_mouseState, m_world);
 
 	auto HandleEnvs = [&](bool isSmall) {
 		for (size_t i = 0; i < m_envSequence.size(); ++i)
@@ -231,17 +199,10 @@ void Game::DrawLeft()
 			auto env = m_envSequence[i];
 			auto size = isSmall ? GridUnitHalfSize : GridUnitSize;
 
-			DirectX::SimpleMath::Rectangle rect
-			{
-				long(topLeft.X),
-				long(topLeft.Y),
-				long(size),
-				long(size)
-			};
+			auto rect = MakeRectangleSquareByWH(topLeft, size);
 			if (rect.Contains(Vector2(pos.X, pos.Y)))
 			{
-				auto mouseState = m_deviceResources->GetMouseState();
-				if (mouseState.leftButton)
+				if (m_mouseState.leftButton)
 				{
 					m_selectedEnv = env;
 					m_small = isSmall;
@@ -252,12 +213,7 @@ void Game::DrawLeft()
 			{
 				// draw selected
 				auto target = m_deviceResources->GetD2DDeviceContext();
-				auto rect = RectF
-				{
-					topLeft.X, topLeft.Y,
-					topLeft.X + size,
-					topLeft.Y + size
-				};
+				auto rect = MakeRectSquareByWH(topLeft, size);
 				target.DrawRectangle(rect, m_red);
 			}
 
@@ -271,8 +227,9 @@ void Game::DrawLeft()
 void Game::DrawBody()
 {
 	auto mouseState = m_deviceResources->GetMouseState();
-	auto gridPos = GetMouseGridPos();
-	auto mousePos = GetMousePos();
+	auto mousePos = GetMousePos(m_mouseState, m_world);
+	auto gridPos = GetMouseGridPos(mousePos);
+	
 	auto fullRect = Rectangle{ 0, 0, (int)GridSize, (int)GridSize };
 	auto cursorInBody = fullRect.Contains(Vector2(mousePos.X, mousePos.Y));
 
@@ -280,7 +237,7 @@ void Game::DrawBody()
 	{
 		// cursor click
 		MapHelper::SetPos4ToEnv(m_map, gridPos.X, gridPos.Y, m_small, m_selectedEnv);
-		m_mapClean = false;
+		m_pendingSave = true;
 	}
 
 	auto target = m_deviceResources->GetD2DDeviceContext();
@@ -309,13 +266,12 @@ void Game::DrawBody()
 	{
 		// cursor red rectangle
 		int times = m_small ? 1 : 2;
-		auto currentRect = RectF
-		{
-			(float)GridUnitHalfSize * gridPos.X,
-			(float)GridUnitHalfSize * gridPos.Y,
-			(float)GridUnitHalfSize * (gridPos.X + times),
-			(float)GridUnitHalfSize * (gridPos.Y + times)
+		Point2F topLeft
+		{ 
+			GridUnitHalfSize * gridPos.X, 
+			GridUnitHalfSize * gridPos.Y 
 		};
+		auto currentRect = MakeRectSquareByWH(topLeft, times * GridUnitHalfSize);
 		target.DrawRectangle(currentRect, m_red);
 	}
 }
@@ -323,7 +279,26 @@ void Game::DrawBody()
 void Game::DrawRight()
 {
 	auto target = m_deviceResources->GetD2DDeviceContext();
-	DrawSprite(SpriteType::Player1, Point2F{ GridSize + 2.0f, 2.0f });
+
+	if (m_pendingSave)
+	{		
+		auto mousePos = GetMousePos(m_mouseState, m_world);
+		auto topLeft = Point2F{ GridSize + 2.0f, 2.0f };
+
+		DrawSprite(SpriteType::Player1, topLeft);
+		if (IsMouseInSprite(mousePos, topLeft))
+		{
+			RectF rect{ topLeft.X, topLeft.Y, topLeft.X + GridUnitSize, topLeft.Y + GridUnitSize };
+			target.DrawRectangle(rect, m_red);
+			
+			auto mouseState = m_deviceResources->GetMouseState();
+			if (mouseState.leftButton)
+			{
+				m_mapStore.SaveMap(1, m_map);
+				m_pendingSave = false;
+			}
+		}
+	}
 }
 
 void Game::DrawSpecialEnvironments()
@@ -362,4 +337,49 @@ void Game::OnDeviceLost()
 {
 	// TODO: Add Direct3D resource cleanup here.
 	m_bmp.Reset();
+}
+
+bool IsMouseInSprite(Point2F mousePos, Point2F spriteTopLeft, float spriteSize)
+{
+	auto rect = MakeRectangleSquareByWH(spriteTopLeft, spriteSize);
+	return rect.Contains(Vector2(mousePos.X, mousePos.Y));
+}
+
+Point2F GetMousePos(const Mouse::State& mouseState, Matrix3x2F world)
+{
+	auto worldCopy = Matrix3x2F(world);
+	ASSERT(worldCopy.Invert());
+	return worldCopy.TransformPoint({ (float)mouseState.x, (float)mouseState.y });
+}
+
+Point2U GetMouseGridPos(Point2F mousePos)
+{
+	Point2U gridPos
+	{
+		(unsigned int)clamp(mousePos.X / GridUnitHalfSize, 0, GridCountDouble - 1),
+		(unsigned int)clamp(mousePos.Y / GridUnitHalfSize, 0, GridCountDouble - 1)
+	};
+	return gridPos;
+}
+
+RectF MakeRectSquareByWH(Point2F topLeft, float width)
+{
+	return RectF
+	{
+		topLeft.X, 
+		topLeft.Y, 
+		topLeft.X + width, 
+		topLeft.Y + width
+	};
+}
+
+Rectangle MakeRectangleSquareByWH(Point2F topLeft, float width)
+{
+	return Rectangle
+	{
+		long(topLeft.X),
+		long(topLeft.Y),
+		long(width),
+		long(width)
+	};
 }

@@ -35,6 +35,7 @@ std::string Tank::MapHelper::Serialize(MapBody body)
 		{
 			result += EnvTypeToChar(body[y][x]);
 		}
+		result += "\r\n";
 	}
 	return result;
 }

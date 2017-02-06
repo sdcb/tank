@@ -36,8 +36,6 @@ void Tank::MapStore::SaveMap(int mapId, Tank::MapBody body)
 {
 	string str = MapHelper::Serialize(body);
 	m_db << uR"~(
-INSERT OR REPLACE INTO [Map]
-SET [Content] = ?
-WHERE Id = ?
-)~" << str << mapId;
+INSERT OR REPLACE INTO [Map] (Id, Content) VALUES(?, ?)
+)~" << mapId << str;
 }
