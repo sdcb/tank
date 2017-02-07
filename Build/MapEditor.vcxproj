@@ -164,12 +164,14 @@
     <ClCompile Include="..\Src\MapEditor\MapStore.cpp" />
     <ClCompile Include="..\Src\MapEditor\MainScene.cpp" />
     <ClCompile Include="..\Src\MapHelper.cpp" />
+    <ClCompile Include="..\Src\MathUtil.cpp" />
     <ClCompile Include="..\Src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\Src\SpriteBase.cpp" />
     <ClCompile Include="..\Src\TankSprite.cpp" />
     <ClCompile Include="..\Src\TankDialog.cpp" />
     <ClCompile Include="..\Src\WinMain.cpp" />
@@ -181,8 +183,10 @@
     <ClInclude Include="..\Src\MapEditor\SpriteType.h" />
     <ClInclude Include="..\Src\MapEditor\MainScene.h" />
     <ClInclude Include="..\Src\MapHelper.h" />
+    <ClInclude Include="..\Src\MathUtil.h" />
     <ClInclude Include="..\Src\pch.h" />
     <ClInclude Include="..\Src\PreDefined.h" />
+    <ClInclude Include="..\Src\SpriteBase.h" />
     <ClInclude Include="..\Src\StepTimer.h" />
     <ClInclude Include="..\Src\TankSprite.h" />
     <ClInclude Include="..\Src\TankDialog.h" />

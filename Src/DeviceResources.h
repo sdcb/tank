@@ -22,6 +22,8 @@ namespace DX
                         UINT backBufferCount = 2,
                         D3D_FEATURE_LEVEL minFeatureLevel = D3D_FEATURE_LEVEL_9_1);
 
+		void Update();
+
         void CreateDeviceResources();
         void CreateWindowSizeDependentResources();
         void SetWindow(HWND window, int width, int height);
@@ -34,27 +36,34 @@ namespace DX
         RECT GetOutputSize() const { return m_outputSize; }
 
         // Direct3D Accessors.
-        ID3D11Device*           GetD3DDevice() const                    { return m_d3dDevice.Get(); }
-        ID3D11Device1*          GetD3DDevice1() const                   { return m_d3dDevice1.Get(); }
-        ID3D11DeviceContext*    GetD3DDeviceContext() const             { return m_d3dContext.Get(); }
-        ID3D11DeviceContext1*   GetD3DDeviceContext1() const            { return m_d3dContext1.Get(); }
-        IDXGISwapChain*         GetSwapChain() const                    { return m_swapChain.Get(); }
-        IDXGISwapChain1*        GetSwapChain1() const                   { return m_swapChain1.Get(); }
-        D3D_FEATURE_LEVEL       GetDeviceFeatureLevel() const           { return m_d3dFeatureLevel; }
-        ID3D11Texture2D*        GetRenderTarget() const                 { return m_renderTarget.Get(); }
-        ID3D11Texture2D*        GetDepthStencil() const                 { return m_depthStencil.Get(); }
-        ID3D11RenderTargetView*	GetRenderTargetView() const             { return m_d3dRenderTargetView.Get(); }
-        ID3D11DepthStencilView* GetDepthStencilView() const             { return m_d3dDepthStencilView.Get(); }
-        DXGI_FORMAT             GetBackBufferFormat() const             { return m_backBufferFormat; }
-        DXGI_FORMAT             GetDepthBufferFormat() const            { return m_depthBufferFormat; }
-        D3D11_VIEWPORT          GetScreenViewport() const               { return m_screenViewport; }
-        UINT                    GetBackBufferCount() const              { return m_backBufferCount; }
-        KennyKerr::Direct2D::DeviceContext& GetD2DDeviceContext()       { return m_deviceContext; }
-        KennyKerr::Direct2D::Factory1       GetD2DFactory() const       { return m_d2dFactory; }
-        KennyKerr::DirectWrite::Factory1    GetDWriteFactory() const    { return m_dwriteFactory; }
-        KennyKerr::Wic::Factory             GetWicFactory() const       { return m_wicFactory; }
-		DirectX::Keyboard::State            GetKeyboardState() const    { return m_keyboard.GetState(); }
-		DirectX::Mouse::State               GetMouseState() const       { return m_mouse.GetState(); }
+        ID3D11Device*           GetD3DDevice() const          { return m_d3dDevice.Get(); }
+        ID3D11Device1*          GetD3DDevice1() const         { return m_d3dDevice1.Get(); }
+        ID3D11DeviceContext*    GetD3DDeviceContext() const   { return m_d3dContext.Get(); }
+        ID3D11DeviceContext1*   GetD3DDeviceContext1() const  { return m_d3dContext1.Get(); }
+        IDXGISwapChain*         GetSwapChain() const          { return m_swapChain.Get(); }
+        IDXGISwapChain1*        GetSwapChain1() const         { return m_swapChain1.Get(); }
+        D3D_FEATURE_LEVEL       GetDeviceFeatureLevel() const { return m_d3dFeatureLevel; }
+        ID3D11Texture2D*        GetRenderTarget() const       { return m_renderTarget.Get(); }
+        ID3D11Texture2D*        GetDepthStencil() const       { return m_depthStencil.Get(); }
+        ID3D11RenderTargetView*	GetRenderTargetView() const   { return m_d3dRenderTargetView.Get(); }
+        ID3D11DepthStencilView* GetDepthStencilView() const   { return m_d3dDepthStencilView.Get(); }
+        DXGI_FORMAT             GetBackBufferFormat() const   { return m_backBufferFormat; }
+        DXGI_FORMAT             GetDepthBufferFormat() const  { return m_depthBufferFormat; }
+        D3D11_VIEWPORT          GetScreenViewport() const     { return m_screenViewport; }
+        UINT                    GetBackBufferCount() const    { return m_backBufferCount; }
+
+        KennyKerr::Direct2D::DeviceContext&   GetD2DDeviceContext()       { return m_deviceContext; }
+        KennyKerr::Direct2D::Factory1         GetD2DFactory() const       { return m_d2dFactory; }
+        KennyKerr::DirectWrite::Factory1      GetDWriteFactory() const    { return m_dwriteFactory; }
+        KennyKerr::Wic::Factory               GetWicFactory() const       { return m_wicFactory; }
+		const DirectX::Keyboard::State&       GetKeyboardState() const    { return m_keyboardState; }
+		const DirectX::Mouse::State&          GetMouseState() const       { return m_mouseState; }
+		KennyKerr::DirectWrite::TextFormat&   GetTextFormat()             { return m_textFormat; }
+		KennyKerr::Point2F                    GetMousePos() const         { return m_mousePos; }
+		KennyKerr::Direct2D::SolidColorBrush& GetOrCreateColor(D2D1::ColorF::Enum solidColor);
+
+		void SetWorldTranslation(D2D1::Matrix3x2F world) { m_world = world; }
+		D2D1::Matrix3x2F GetWorldTranslation() const     { return m_world; }
 
         // Performance events
         void PIXBeginEvent(_In_z_ const wchar_t* name)
@@ -120,5 +129,21 @@ namespace DX
 
         // The IDeviceNotify can be held directly as it owns the DeviceResources.
         IDeviceNotify*                                  m_deviceNotify;
+
+		// color map
+		std::unordered_map<D2D1::ColorF::Enum, KennyKerr::Direct2D::SolidColorBrush> m_colors;
+
+		// text format
+		KennyKerr::DirectWrite::TextFormat              m_textFormat;
+
+		// input device status
+		DirectX::Mouse::State                           m_mouseState;
+		DirectX::Keyboard::State                        m_keyboardState;
+
+		// world translation
+		D2D1::Matrix3x2F                                m_world;
+
+		// mouse position
+		KennyKerr::Point2F                              m_mousePos;
     };
 }

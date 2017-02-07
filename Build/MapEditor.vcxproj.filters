@@ -24,6 +24,12 @@
     <ClCompile Include="..\Src\TankDialog.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="..\Src\MathUtil.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\SpriteBase.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Src\MapEditor\MapStore.h" />
@@ -51,6 +57,12 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="..\Src\TankDialog.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\MathUtil.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\SpriteBase.h">
       <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>

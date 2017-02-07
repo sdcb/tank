@@ -51,10 +51,10 @@ private:
 
     // Device resources.
 	KennyKerr::Direct2D::Bitmap1            m_bmp;
-	KennyKerr::Direct2D::SolidColorBrush    m_black, m_red;
+	std::function<KennyKerr::Direct2D::SolidColorBrush()> m_black, m_red;
 
 	// text format
-	KennyKerr::DirectWrite::TextFormat      m_textFormat;
+	std::function<KennyKerr::DirectWrite::TextFormat()>   m_textFormat;
 
 	// selected environment type
 	Tank::EnvType                           m_selectedEnv;
@@ -68,11 +68,12 @@ private:
 	std::array<Tank::EnvType, 6>            m_envSequence;
 
 	// input states
-	DirectX::Keyboard::State                m_keyboardState;
-	DirectX::Mouse::State                   m_mouseState;
+	std::function<DirectX::Keyboard::State()> m_keyboardState;
+	std::function<DirectX::Mouse::State()>    m_mouseState;
+	std::function<KennyKerr::Point2F()>       m_mousePos;
 
 	// sprite map
-	Tank::TankSpriteMapArray                m_tankSpriteMap;
+	const Tank::TankSpriteMapArray          m_tankSpriteMap;
 
 	// scale
 	D2D1::Matrix3x2F                        m_world;

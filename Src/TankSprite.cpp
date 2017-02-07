@@ -5,12 +5,10 @@ using namespace std;
 using namespace Tank;
 using KennyKerr::RectF;
 
-std::array<RectF, (size_t)TankSpriteUnit::Count> Tank::CreateTankSpriteMap()
+const array<RectF, (size_t)TankSpriteUnit::Count> s_tankSpriteMap
 {
-	return array<RectF, (size_t)TankSpriteUnit::Count>
-	{
-		// P1
-		RectF{ 0.0f, 0.0f, 16.0f, 16.0f },
+	// P1
+	RectF{ 0.0f, 0.0f, 16.0f, 16.0f },
 		RectF{ 16.0f, 0.0f, 32.0f, 16.0f },
 		RectF{ 32.0f, 0.0f, 48.0f, 16.0f },
 		RectF{ 48.0f, 0.0f, 64.0f, 16.0f },
@@ -42,7 +40,7 @@ std::array<RectF, (size_t)TankSpriteUnit::Count> Tank::CreateTankSpriteMap()
 		RectF{ 80.0f, 48.0f, 96.0f, 64.0f },
 		RectF{ 96.0f, 48.0f, 112.0f, 64.0f },
 		RectF{ 112.0f, 48.0f, 128.0f, 64.0f },
-		
+
 		RectF{ 0.0f, 64.0f, 16.0f, 80.0f },
 		RectF{ 16.0f, 64.0f, 32.0f, 80.0f },
 		RectF{ 32.0f, 64.0f, 48.0f, 80.0f },
@@ -75,7 +73,7 @@ std::array<RectF, (size_t)TankSpriteUnit::Count> Tank::CreateTankSpriteMap()
 		RectF{ 80.0f, 112.0f, 96.0f, 128.0f },
 		RectF{ 96.0f, 112.0f, 112.0f, 128.0f },
 		RectF{ 112.0f, 112.0f, 128.0f, 128.0f },
-		
+
 		RectF{ 0.0f, 128.0f, 16.0f, 144.0f },
 		RectF{ 16.0f, 128.0f, 32.0f, 144.0f },
 		RectF{ 32.0f, 128.0f, 48.0f, 144.0f },
@@ -108,7 +106,7 @@ std::array<RectF, (size_t)TankSpriteUnit::Count> Tank::CreateTankSpriteMap()
 		RectF{ 80.0f, 176.0f, 96.0f, 192.0f },
 		RectF{ 96.0f, 176.0f, 112.0f, 192.0f },
 		RectF{ 112.0f, 176.0f, 128.0f, 192.0f },
-		
+
 		RectF{ 0.0f, 192.0f, 16.0f, 208.0f },
 		RectF{ 16.0f, 192.0f, 32.0f, 208.0f },
 		RectF{ 32.0f, 192.0f, 48.0f, 208.0f },
@@ -141,7 +139,7 @@ std::array<RectF, (size_t)TankSpriteUnit::Count> Tank::CreateTankSpriteMap()
 		RectF{ 80.0f, 240.0f, 96.0f, 256.0f },
 		RectF{ 96.0f, 240.0f, 112.0f, 256.0f },
 		RectF{ 112.0f, 240.0f, 128.0f, 256.0f },
-		
+
 		RectF{ 0.0f, 256.0f, 16.0f, 272.0f },
 		RectF{ 16.0f, 256.0f, 32.0f, 272.0f },
 		RectF{ 32.0f, 256.0f, 48.0f, 272.0f },
@@ -174,7 +172,7 @@ std::array<RectF, (size_t)TankSpriteUnit::Count> Tank::CreateTankSpriteMap()
 		RectF{ 80.0f, 304.0f, 96.0f, 320.0f },
 		RectF{ 96.0f, 304.0f, 112.0f, 320.0f },
 		RectF{ 112.0f, 304.0f, 128.0f, 320.0f },
-		
+
 		RectF{ 0.0f, 320.0f, 16.0f, 336.0f },
 		RectF{ 16.0f, 320.0f, 32.0f, 336.0f },
 		RectF{ 32.0f, 320.0f, 48.0f, 336.0f },
@@ -243,6 +241,20 @@ std::array<RectF, (size_t)TankSpriteUnit::Count> Tank::CreateTankSpriteMap()
 		RectF{ 80.0f,  432.0f, 96.0f, 448.0f },
 		RectF{ 96.0f,  432.0f, 112.0f, 448.0f },
 		RectF{ 112.0f, 432.0f, 128.0f, 448.0f },
+};
+
+const std::array<RectF, (size_t)TankSpriteUnit::Count> Tank::CreateTankSpriteMap()
+{
+	return s_tankSpriteMap;
+}
+
+KennyKerr::SizeF Tank::GetSpriteUnitSize(TankSpriteUnit id)
+{
+	auto rect = s_tankSpriteMap[(size_t)id];
+	return KennyKerr::SizeF
+	{
+		rect.Right - rect.Left, 
+		rect.Bottom - rect.Top
 	};
 }
 

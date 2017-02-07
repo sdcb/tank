@@ -234,5 +234,7 @@ namespace Tank
 
 	TankSpriteUnit operator+(TankSpriteUnit left, int v);
 
-	std::array<KennyKerr::RectF, (size_t)TankSpriteUnit::Count> CreateTankSpriteMap();
+	const std::array<KennyKerr::RectF, (size_t)TankSpriteUnit::Count> CreateTankSpriteMap();
+
+	KennyKerr::SizeF GetSpriteUnitSize(TankSpriteUnit id);
 }

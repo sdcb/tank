@@ -5,11 +5,13 @@
 
 #include "pch.h"
 #include "DeviceResources.h"
+#include "MathUtil.h"
 
 using namespace DirectX;
 using namespace KennyKerr;
 using namespace KennyKerr::Direct2D;
 using Microsoft::WRL::ComPtr;
+using D2D1::ColorF;
 
 namespace
 {
@@ -48,8 +50,16 @@ DX::DeviceResources::DeviceResources(DXGI_FORMAT backBufferFormat, DXGI_FORMAT d
     m_deviceNotify(nullptr), 
 	m_d2dFactory(CreateFactory()), 
 	m_dwriteFactory(DirectWrite::CreateFactory()), 
-	m_wicFactory(Wic::CreateFactory())
+	m_wicFactory(Wic::CreateFactory()), 
+	m_textFormat(m_dwriteFactory.CreateTextFormat(L"Consolas", 12.0f))
 {
+}
+
+void DX::DeviceResources::Update()
+{
+	m_mouseState = m_mouse.GetState();
+	m_keyboardState = m_keyboard.GetState();
+	m_mousePos = Tank::MathUtil::GetMousePos(m_mouseState, m_world);
 }
 
 // Configures the Direct3D device, and stores handles to it and the device context.
@@ -437,6 +447,7 @@ void DX::DeviceResources::HandleDeviceLost()
     m_d3dAnnotation.Reset();
     m_d3dDevice1.Reset();
 	m_deviceContext.Reset();
+	m_colors.clear();
 
 #ifdef _DEBUG
     {
@@ -496,6 +507,15 @@ void DX::DeviceResources::Present()
     {
         DX::ThrowIfFailed(hr);
     }
+}
+
+KennyKerr::Direct2D::SolidColorBrush & DX::DeviceResources::GetOrCreateColor(D2D1::ColorF::Enum color)
+{
+	if (m_colors.find(color) == m_colors.end())
+	{
+		m_colors[color] = m_deviceContext.CreateSolidColorBrush(ColorF(color));
+	}
+	return m_colors[color];
 }
 
 // This method acquires the first available hardware adapter.
