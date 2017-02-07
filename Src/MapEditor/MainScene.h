@@ -9,6 +9,7 @@
 #include "PreDefined.h"
 #include "GameBase.h"
 #include "MapStore.h"
+#include "SpriteButton.h"
 #define PROJECT_NAME L"Map Editor"
 
 namespace Tank
@@ -77,4 +78,13 @@ private:
 
 	// scale
 	D2D1::Matrix3x2F                        m_world;
+
+	// sprite controls
+	std::vector<Tank::SpriteButton>         m_buttons;
+
+public:
+	// window messages
+	virtual void OnClick(int x, int y) override;
+	virtual void OnMouseMove(int x, int y) override;
+	virtual void OnKeyUp(DirectX::Keyboard::Keys key) override;
 };

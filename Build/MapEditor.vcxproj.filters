@@ -27,7 +27,7 @@
     <ClCompile Include="..\Src\MathUtil.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\Src\SpriteBase.cpp">
+    <ClCompile Include="..\Src\SpriteButton.cpp">
       <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
@@ -62,7 +62,7 @@
     <ClInclude Include="..\Src\MathUtil.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\Src\SpriteBase.h">
+    <ClInclude Include="..\Src\SpriteButton.h">
       <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>

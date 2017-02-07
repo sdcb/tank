@@ -31,6 +31,10 @@ public:
 	virtual void OnResuming();
 	virtual void OnWindowSizeChanged(int width, int height);
 
+	virtual void OnClick(int x, int y);
+	virtual void OnMouseMove(int x, int y);
+	virtual void OnKeyUp(DirectX::Keyboard::Keys key);
+
 	// Properties
 	virtual void GetDefaultSize(int& width, int& height) const;
 

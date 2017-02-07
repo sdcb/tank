@@ -247,6 +247,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // A menu is active and the user presses a key that does not correspond
         // to any mnemonic or accelerator key. Ignore so we don't produce an error beep.
         return MAKELRESULT(0, MNC_CLOSE);
+
+	case WM_LBUTTONUP:
+		game->OnClick(LOWORD(lParam), HIWORD(lParam));
+		break;
+
+	case WM_MOUSEMOVE:
+		game->OnMouseMove(LOWORD(lParam), HIWORD(lParam));
+		break;
+
+	case WM_KEYUP:
+		game->OnKeyUp((DirectX::Keyboard::Keys)wParam);
+		break;
     }
 
 	Keyboard::ProcessMessage(message, wParam, lParam);

@@ -153,6 +153,18 @@ void GameBase::OnWindowSizeChanged(int width, int height)
 	// TODO: Game window is being resized.
 }
 
+void GameBase::OnClick(int x, int y)
+{
+}
+
+void GameBase::OnMouseMove(int x, int y)
+{
+}
+
+void GameBase::OnKeyUp(DirectX::Keyboard::Keys key)
+{
+}
+
 // Properties
 void GameBase::GetDefaultSize(int& width, int& height) const
 {

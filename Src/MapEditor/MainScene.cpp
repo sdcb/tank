@@ -374,6 +374,32 @@ void Game::DrawSpecialEnvironments()
 	});
 }
 
+void Game::OnClick(int x, int y)
+{
+	auto pos = MathUtil::GetMousePos(x, y, m_world);
+	for (auto & button : m_buttons)
+	{
+		button.OnClick(pos);
+	}
+}
+
+void Game::OnMouseMove(int x, int y)
+{
+	auto pos = MathUtil::GetMousePos(x, y, m_world);
+	for (auto & button : m_buttons)
+	{
+		button.OnMouseMove(pos);
+	}
+}
+
+void Game::OnKeyUp(DirectX::Keyboard::Keys key)
+{
+	for (auto & button : m_buttons)
+	{
+		button.OnKeyUp(key);
+	}
+}
+
 void Game::OnDeviceLost()
 {
 	// TODO: Add Direct3D resource cleanup here.

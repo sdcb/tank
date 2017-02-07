@@ -7,17 +7,17 @@ using namespace KennyKerr;
 using namespace DirectX::SimpleMath;
 using D2D1::Matrix3x2F;
 
-bool MathUtil::IsMouseInSprite(Point2F mousePos, Point2F spriteTopLeft, float spriteSize)
+bool MathUtil::IsPointInSprite(Point2F mousePos, Point2F spriteTopLeft, float spriteSize)
 {
 	auto rect = MakeRectangleSquareByWH(spriteTopLeft, spriteSize);
 	return rect.Contains(Vector2(mousePos.X, mousePos.Y));
 }
 
-Point2F MathUtil::GetMousePos(const Mouse::State& mouseState, Matrix3x2F world)
+Point2F MathUtil::GetMousePos(int x, int y, Matrix3x2F world)
 {
 	auto worldCopy = Matrix3x2F(world);
 	worldCopy.Invert();
-	return worldCopy.TransformPoint({ (float)mouseState.x, (float)mouseState.y });
+	return worldCopy.TransformPoint({ (float)x, (float)y });
 }
 
 Point2U MathUtil::GetMouseGridPos(Point2F mousePos)

@@ -59,7 +59,7 @@ void DX::DeviceResources::Update()
 {
 	m_mouseState = m_mouse.GetState();
 	m_keyboardState = m_keyboard.GetState();
-	m_mousePos = Tank::MathUtil::GetMousePos(m_mouseState, m_world);
+	m_mousePos = Tank::MathUtil::GetMousePos(m_mouseState.x, m_mouseState.y, m_world);
 }
 
 // Configures the Direct3D device, and stores handles to it and the device context.
