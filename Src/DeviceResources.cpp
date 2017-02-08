@@ -476,7 +476,7 @@ void DX::DeviceResources::Present()
     // The first argument instructs DXGI to block until VSync, putting the application
     // to sleep until the next VSync. This ensures we don't waste any cycles rendering
     // frames that will never be displayed to the screen.
-    HRESULT hr = m_swapChain->Present(1, 0);
+    HRESULT hr = m_swapChain->Present(0, 0);
 
     if (m_d3dContext1)
     {

@@ -59,6 +59,11 @@ namespace DX
         void SetTargetElapsedTicks(uint64_t targetElapsed)	{ m_targetElapsedTicks = targetElapsed; }
         void SetTargetElapsedSeconds(double targetElapsed)	{ m_targetElapsedTicks = SecondsToTicks(targetElapsed); }
 
+		size_t GetSpriteId(int intervalMs, size_t spriteCount) const
+		{
+			return (m_qpcLastTime.QuadPart * 1000 / m_qpcFrequency.QuadPart) / intervalMs % spriteCount;
+		}
+
         // Integer format represents time using 10,000,000 ticks per second.
         static const uint64_t TicksPerSecond = 10000000;
 

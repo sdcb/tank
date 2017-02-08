@@ -2,6 +2,8 @@
 #include "GameBase.h"
 
 using namespace DirectX;
+using D2D1::ColorF;
+using D2D1::Matrix3x2F;
 
 GameBase::GameBase()
 {
@@ -26,8 +28,8 @@ void GameBase::Initialize(HWND window, int width, int height)
 	// TODO: Change the timer settings if you want something other than the default variable timestep mode.
 	// e.g. for 60 FPS fixed timestep update logic, call:
 
-	m_timer.SetFixedTimeStep(true);
-	m_timer.SetTargetElapsedSeconds(1.0 / 60);
+	/*m_timer.SetFixedTimeStep(true);
+	m_timer.SetTargetElapsedSeconds(1.0 / 60);*/
 }
 
 #pragma region Frame Update
@@ -63,10 +65,20 @@ void GameBase::Render()
 	m_deviceResources->PIXBeginEvent(L"Render");
 	auto context = m_deviceResources->GetD3DDeviceContext();
 	auto target = m_deviceResources->GetD2DDeviceContext();
+	auto & state = m_deviceResources->GetKeyboardState();
 
 	// TODO: Add your rendering code here.
 	target.BeginDraw();
 	Draw(target);
+	
+	if (state.LeftControl && state.LeftAlt && state.F || _DEBUG)
+	{
+		auto fps = fmt::format(L"FPS: {0}", m_timer.GetFramesPerSecond());
+		target.SetTransform(Matrix3x2F::Identity());
+		target.DrawText(fps.c_str(), fps.size(), m_deviceResources->GetTextFormat(), KennyKerr::RectF{ 0, 0, 500.0f, 500.0f },
+			m_deviceResources->GetOrCreateColor(ColorF::Yellow));
+	}
+	
 	target.EndDraw();
 
 	m_deviceResources->PIXEndEvent();
@@ -169,7 +181,7 @@ void GameBase::OnKeyUp(DirectX::Keyboard::Keys key)
 void GameBase::GetDefaultSize(int& width, int& height) const
 {
 	// TODO: Change to desired default window size (note minimum size is 320x200).
-	width = 800;
-	height = 600;
+	width = 832;
+	height = 624;
 }
 #pragma endregion

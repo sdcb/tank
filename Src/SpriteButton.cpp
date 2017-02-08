@@ -51,7 +51,7 @@ void Tank::SpriteButton::Update(DX::StepTimer const * timer, DX::DeviceResources
 {
 	if (m_hover)
 	{
-		m_spriteId = timer->GetFrameCount() / 10 % m_sprites.size();
+		m_spriteId = timer->GetSpriteId(500, m_sprites.size());
 	}
 	
 	m_dxRes = dxRes;

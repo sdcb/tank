@@ -120,7 +120,7 @@ void Game::DrawUnit(SpriteUnit id, KennyKerr::Point2F topLeft)
 void Game::DrawEnv(EnvType env, KennyKerr::Point2F topLeft)
 {
 	auto units = MapHelper::GetEnvTypeUnits(env);
-	auto id = m_timer.GetFrameCount() / 10 % units.size();
+	auto id = m_timer.GetSpriteId(200, units.size());
 	DrawUnit(units[id], topLeft);
 }
 
@@ -132,19 +132,19 @@ void Game::DrawSprite(Tank::SpriteType sprite, KennyKerr::Point2F topLeft)
 		DrawUnit(SpriteUnit::Eager, topLeft);
 		break;
 	case SpriteType::Born:
-		DrawUnit(SpriteUnit::Star_0 + m_timer.GetFrameCount() / 10 % 4, topLeft);
+		DrawUnit(SpriteUnit::Star_0 + m_timer.GetSpriteId(100, 4), topLeft);
 		break;
 	case SpriteType::Player1:
-		DrawUnit(SpriteUnit::P1_1_U0 + m_timer.GetFrameCount() / 10 % 2, topLeft);
+		DrawUnit(SpriteUnit::P1_1_U0 + m_timer.GetSpriteId(200, 2), topLeft);
 		break;
 	case SpriteType::Player2:
-		DrawUnit(SpriteUnit::P2_1_U0 + m_timer.GetFrameCount() / 10 % 2, topLeft);
+		DrawUnit(SpriteUnit::P2_1_U0 + m_timer.GetSpriteId(200, 2), topLeft);
 		break;
 	case SpriteType::Left:
-		DrawUnit(SpriteUnit::P1_2_L0 + m_timer.GetFrameCount() / 10 % 2, topLeft);
+		DrawUnit(SpriteUnit::P1_2_L0 + m_timer.GetSpriteId(200, 2), topLeft);
 		break;
 	case SpriteType::Right:
-		DrawUnit(SpriteUnit::P1_2_R0 + m_timer.GetFrameCount() / 10 % 2, topLeft);
+		DrawUnit(SpriteUnit::P1_2_R0 + m_timer.GetSpriteId(200, 2), topLeft);
 		break;
 	default:
 		throw exception{ "Unkonwn sprite type." };
