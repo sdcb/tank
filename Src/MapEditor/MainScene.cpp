@@ -152,21 +152,6 @@ void Game::DrawSprite(Tank::SpriteType sprite, KennyKerr::Point2F topLeft)
 	}
 }
 
-void Game::AddClickHandler(KennyKerr::Point2F topLeft, float size, std::function<void()> clickHandler)
-{
-	auto rectangle = MathUtil::MakeRectangleSquareByWH(topLeft, size);
-	auto rect = MathUtil::MakeRectSquareByWH(topLeft, size);
-	auto target = m_deviceResources->GetD2DDeviceContext();
-	if (rectangle.Contains(Vector2{ m_mousePos().X, m_mousePos().Y }))
-	{
-		target.DrawRectangle(rect, m_red());
-		if (m_mouseState().leftButton && m_timer.GetFrameCount() % 5 == 0)
-		{
-			clickHandler();
-		}
-	}
-}
-
 void Game::GoOffsetMap(int offset)
 {
 	if (m_pendingSaveBtn->Visible() && !TankDialog::Confirm(L"尚未保存，确定要放弃已编辑的地图吗？"))

@@ -38,7 +38,6 @@ private:
 	void DrawUnit(Tank::SpriteUnit id, KennyKerr::Point2F center);
 	void DrawEnv(Tank::EnvType env, KennyKerr::Point2F topLeft);
 	void DrawSprite(Tank::SpriteType sprite, KennyKerr::Point2F topLeft);
-	void AddClickHandler(KennyKerr::Point2F topLeft, float size, std::function<void()> clickHandler);
 
 	// map functions
 	void GoOffsetMap(int offset);
