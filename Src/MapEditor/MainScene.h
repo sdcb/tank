@@ -22,22 +22,21 @@ namespace Tank
 class Game : public GameBase
 {
 public:
-    Game();
+	Game();
 
-    // IDeviceNotify
-    virtual void OnDeviceLost() override;
+	// IDeviceNotify
+	virtual void OnDeviceLost() override;
 
 private:
 
-    void Update(DX::StepTimer const& timer) override;
+	void Update(DX::StepTimer const& timer) override;
 	void Draw(KennyKerr::Direct2D::DeviceContext target) override;
 
-    void CreateDeviceResources() override;
-    void CreateWindowSizeResources() override;
+	void CreateDeviceResources() override;
+	void CreateWindowSizeResources() override;
 
-	void DrawUnit(Tank::TankSpriteUnit id, KennyKerr::Point2F center);
+	void DrawUnit(Tank::SpriteUnit id, KennyKerr::Point2F center);
 	void DrawEnv(Tank::EnvType env, KennyKerr::Point2F topLeft);
-	void DrawEnv4(Tank::EnvType env, KennyKerr::Point2F topLeft);
 	void DrawSprite(Tank::SpriteType sprite, KennyKerr::Point2F topLeft);
 	void AddClickHandler(KennyKerr::Point2F topLeft, float size, std::function<void()> clickHandler);
 
@@ -45,12 +44,16 @@ private:
 	void GoOffsetMap(int offset);
 	void SaveMap();
 
-	void DrawLeft();
 	void DrawRight();
 	void DrawBody();
 	void DrawSpecialEnvironments();
 
-    // Device resources.
+	void SetupRightButtons();
+	void SetupLeftButtons();
+
+	Tank::SpriteButton* NewSpriteButton(KennyKerr::Point2F topLeft, std::vector<Tank::SpriteUnit> unites);
+
+	// Device resources.
 	KennyKerr::Direct2D::Bitmap1            m_bmp;
 	std::function<KennyKerr::Direct2D::SolidColorBrush()> m_black, m_red;
 
@@ -65,7 +68,6 @@ private:
 	int                                     m_mapId;
 	Tank::MapBody                           m_map;
 	Tank::MapStore                          m_mapStore;
-	bool                                    m_pendingSave;
 	std::array<Tank::EnvType, 6>            m_envSequence;
 
 	// input states
@@ -80,7 +82,9 @@ private:
 	D2D1::Matrix3x2F                        m_world;
 
 	// sprite controls
-	std::vector<Tank::SpriteButton>         m_buttons;
+	std::vector<std::unique_ptr<Tank::SpriteButton>> m_buttons;
+	std::vector<Tank::SpriteButton*>                 m_envButtons;
+	Tank::SpriteButton *m_rightBtn, *m_leftBtn, *m_pendingSaveBtn;
 
 public:
 	// window messages

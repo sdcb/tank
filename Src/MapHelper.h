@@ -23,6 +23,7 @@ namespace Tank
 		static void SetPos4ToEnv(MapBody& body, int x, int y, bool isSmall, EnvType type);
 
 		static MapBody CreateBasic();
-		static MapBody CreateTest();
+
+		static const std::vector<Tank::SpriteUnit> GetEnvTypeUnits(Tank::EnvType env);
 	};
 }

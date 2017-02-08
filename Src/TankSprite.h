@@ -2,7 +2,7 @@
 
 namespace Tank
 {
-	enum class TankSpriteUnit : unsigned char
+	enum class SpriteUnit : unsigned char
 	{
 		P1_1_L0,
 		P1_1_L1,
@@ -214,6 +214,7 @@ namespace Tank
 		Ammo_U,
 		Ammo_R,
 		Ammo_D,
+		Env_Empty,
 		Flag,
 		Star_0,
 		Star_1,
@@ -232,9 +233,9 @@ namespace Tank
 		Count,
 	};
 
-	TankSpriteUnit operator+(TankSpriteUnit left, int v);
+	SpriteUnit operator+(SpriteUnit left, int v);
 
-	const std::array<KennyKerr::RectF, (size_t)TankSpriteUnit::Count> CreateTankSpriteMap();
+	const std::array<KennyKerr::RectF, (size_t)SpriteUnit::Count> CreateTankSpriteMap();
 
-	KennyKerr::SizeF GetSpriteUnitSize(TankSpriteUnit id);
+	KennyKerr::SizeF GetSpriteUnitSize(SpriteUnit id);
 }

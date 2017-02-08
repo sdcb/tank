@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "MapHelper.h"
 #include <regex>
+#include "TankSprite.h"
 
 using namespace std;
 using namespace Tank;
@@ -80,35 +81,25 @@ MapBody Tank::MapHelper::CreateBasic()
 		"           W  W           ");
 }
 
-MapBody Tank::MapHelper::CreateTest()
+const std::vector<Tank::SpriteUnit> Tank::MapHelper::GetEnvTypeUnits(Tank::EnvType env)
 {
-	return Deserialize(
-		"  WWWWWWWWWW  WWWWWWWWWW  "
-		"  WWWWWWWWWW  WWWWWWWWWW  "
-		"WWWWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWW  WIIIIIIIIIII"
-		"WWWWWWWWWWWW  WFFFFFFFFFFF");
+	switch (env)
+	{
+	case EnvType::Empty:
+		return { SpriteUnit::Env_Empty };
+	case EnvType::Grass:
+		return { SpriteUnit::Env_Grass };
+	case EnvType::Ice:
+		return { SpriteUnit::Env_Ice };
+	case EnvType::Iron:
+		return { SpriteUnit::Env_Iron };
+	case EnvType::Sea:
+		return { SpriteUnit::Env_Sea0, SpriteUnit::Env_Sea1 };
+	case EnvType::Wall:
+		return { SpriteUnit::Env_Wall };
+	default:
+		throw std::exception{ "unknown env" };
+	}
 }
 
 EnvType CharToEnvType(char v)

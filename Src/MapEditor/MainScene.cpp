@@ -29,16 +29,16 @@ Game::Game() :
 	m_selectedEnv(EnvType::Empty),
 	m_black([&]() {return m_deviceResources->GetOrCreateColor(ColorF::Black); }),
 	m_red([&]() {return m_deviceResources->GetOrCreateColor(ColorF::Red); }),
-	m_textFormat([&]() {return m_deviceResources->GetTextFormat(); }), 
-	m_keyboardState([&]() { return m_deviceResources->GetKeyboardState(); }), 
-	m_mouseState([&]() { return m_deviceResources->GetMouseState(); }), 
-	m_mousePos([&]() { return m_deviceResources->GetMousePos(); }), 
-	m_envSequence(
+	m_textFormat([&]() {return m_deviceResources->GetTextFormat(); }),
+	m_keyboardState([&]() { return m_deviceResources->GetKeyboardState(); }),
+	m_mouseState([&]() { return m_deviceResources->GetMouseState(); }),
+	m_mousePos([&]() { return m_deviceResources->GetMousePos(); }),
+	m_envSequence({ EnvType::Empty, EnvType::Grass, EnvType::Ice, EnvType::Iron, EnvType::Sea, EnvType::Wall })
 {
-	EnvType::Empty, EnvType::Grass, EnvType::Ice, EnvType::Iron, EnvType::Sea, EnvType::Wall
-})
-{
-	m_map = m_mapStore.LoadMap(1);
+	m_map = m_mapStore.LoadMap(m_mapId);
+
+	SetupLeftButtons();
+	SetupRightButtons();	
 }
 
 // Updates the world.
@@ -47,33 +47,9 @@ void Game::Update(DX::StepTimer const& timer)
 	m_deviceResources->Update();
 
 	// TODO: Add your game logic here.
-	for (size_t i = 0; i < m_envSequence.size(); ++i)
+	for (auto & button : m_buttons)
 	{
-		if (m_keyboardState().IsKeyDown(Keyboard::Keys(Keyboard::D1 + i)))
-		{
-			m_selectedEnv = m_envSequence[i];
-		}
-	}
-	if (m_keyboardState().F1)
-	{
-		m_small = false;
-	}
-	if (m_keyboardState().F2)
-	{
-		m_small = true;
-	}
-
-	if (m_keyboardState().Right && m_timer.GetFrameCount() % 7 == 0)
-	{
-		GoOffsetMap(1);
-	}
-	else if (m_keyboardState().Left && m_timer.GetFrameCount() % 7 == 0)
-	{
-		GoOffsetMap(-1);
-	}
-	if (m_keyboardState().Enter)
-	{
-		SaveMap();
+		button->Update(&m_timer, m_deviceResources.get());
 	}
 }
 
@@ -81,7 +57,12 @@ void Game::Draw(KennyKerr::Direct2D::DeviceContext target)
 {
 	target.SetTransform(m_world);
 	target.FillRectangle(RectF{ 0, 0, (float)GridSize, (float)GridSize }, m_black());
-	DrawLeft();
+	for (auto & button : m_buttons)
+	{
+		button->Draw([&](SpriteUnit id, Point2F topLeft) {
+			DrawUnit(id, topLeft);
+		});
+	}
 	DrawBody();
 	DrawRight();
 }
@@ -115,8 +96,9 @@ void Game::CreateWindowSizeResources()
 	m_deviceResources->SetWorldTranslation(m_world);
 }
 
-void Game::DrawUnit(TankSpriteUnit id, KennyKerr::Point2F topLeft)
+void Game::DrawUnit(SpriteUnit id, KennyKerr::Point2F topLeft)
 {
+	if (id == SpriteUnit::Env_Empty) return;
 	auto imagePos = m_tankSpriteMap[(size_t)id];
 	RectF source
 	{
@@ -138,37 +120,9 @@ void Game::DrawUnit(TankSpriteUnit id, KennyKerr::Point2F topLeft)
 
 void Game::DrawEnv(EnvType env, KennyKerr::Point2F topLeft)
 {
-	switch (env)
-	{
-	case EnvType::Empty:
-		// do nothing;
-		return;
-	case EnvType::Grass:
-		DrawUnit(TankSpriteUnit::Env_Grass, topLeft);
-		return;
-	case EnvType::Ice:
-		DrawUnit(TankSpriteUnit::Env_Ice, topLeft);
-		break;
-	case EnvType::Iron:
-		DrawUnit(TankSpriteUnit::Env_Iron, topLeft);
-		break;
-	case EnvType::Sea:
-		DrawUnit(TankSpriteUnit::Env_Sea0 + m_timer.GetFrameCount() / 10 % 2, topLeft);
-		break;
-	case EnvType::Wall:
-		DrawUnit(TankSpriteUnit::Env_Wall, topLeft);
-		break;
-	default:
-		throw exception("Env is not supported.");
-	}
-}
-
-void Game::DrawEnv4(EnvType env, KennyKerr::Point2F topLeft)
-{
-	DrawEnv(env, topLeft);
-	DrawEnv(env, Point2F{ topLeft.X + GridUnitHalfSize, topLeft.Y });
-	DrawEnv(env, Point2F{ topLeft.X, topLeft.Y + GridUnitHalfSize });
-	DrawEnv(env, Point2F{ topLeft.X + GridUnitHalfSize, topLeft.Y + GridUnitHalfSize });
+	auto units = MapHelper::GetEnvTypeUnits(env);
+	auto id = m_timer.GetFrameCount() / 10 % units.size();
+	DrawUnit(units[id], topLeft);
 }
 
 void Game::DrawSprite(Tank::SpriteType sprite, KennyKerr::Point2F topLeft)
@@ -176,22 +130,22 @@ void Game::DrawSprite(Tank::SpriteType sprite, KennyKerr::Point2F topLeft)
 	switch (sprite)
 	{
 	case SpriteType::Eager:
-		DrawUnit(TankSpriteUnit::Eager, topLeft);
+		DrawUnit(SpriteUnit::Eager, topLeft);
 		break;
 	case SpriteType::Born:
-		DrawUnit(TankSpriteUnit::Star_0 + m_timer.GetFrameCount() / 10 % 4, topLeft);
+		DrawUnit(SpriteUnit::Star_0 + m_timer.GetFrameCount() / 10 % 4, topLeft);
 		break;
 	case SpriteType::Player1:
-		DrawUnit(TankSpriteUnit::P1_1_U0 + m_timer.GetFrameCount() / 10 % 2, topLeft);
+		DrawUnit(SpriteUnit::P1_1_U0 + m_timer.GetFrameCount() / 10 % 2, topLeft);
 		break;
 	case SpriteType::Player2:
-		DrawUnit(TankSpriteUnit::P2_1_U0 + m_timer.GetFrameCount() / 10 % 2, topLeft);
+		DrawUnit(SpriteUnit::P2_1_U0 + m_timer.GetFrameCount() / 10 % 2, topLeft);
 		break;
 	case SpriteType::Left:
-		DrawUnit(TankSpriteUnit::P1_2_L0 + m_timer.GetFrameCount() / 10 % 2, topLeft);
+		DrawUnit(SpriteUnit::P1_2_L0 + m_timer.GetFrameCount() / 10 % 2, topLeft);
 		break;
 	case SpriteType::Right:
-		DrawUnit(TankSpriteUnit::P1_2_R0 + m_timer.GetFrameCount() / 10 % 2, topLeft);
+		DrawUnit(SpriteUnit::P1_2_R0 + m_timer.GetFrameCount() / 10 % 2, topLeft);
 		break;
 	default:
 		throw exception{ "Unkonwn sprite type." };
@@ -215,54 +169,19 @@ void Game::AddClickHandler(KennyKerr::Point2F topLeft, float size, std::function
 
 void Game::GoOffsetMap(int offset)
 {
-	if (m_pendingSave && !TankDialog::Confirm(L"尚未保存，确定要放弃已编辑的地图吗？"))
+	if (m_pendingSaveBtn->Visible() && !TankDialog::Confirm(L"尚未保存，确定要放弃已编辑的地图吗？"))
 	{
 		return;
 	}
 	m_mapId = clamp(m_mapId + offset, 1, INFINITE);
 	m_map = m_mapStore.LoadMap(m_mapId);
-	m_pendingSave = false;
+	m_pendingSaveBtn->SetVisible(false);
 }
 
 void Game::SaveMap()
 {
 	m_mapStore.SaveMap(m_mapId, m_map);
-	m_pendingSave = false;
-}
-
-void Game::DrawLeft()
-{
-	Point2F topLeft{ -GridUnitSize - 2.0f, 2.0f };
-
-	auto HandleEnvs = [&](bool isSmall) {
-		for (size_t i = 0; i < m_envSequence.size(); ++i)
-		{
-			auto env = m_envSequence[i];
-			auto size = isSmall ? GridUnitHalfSize : GridUnitSize;
-
-			auto rect = MathUtil::MakeRectangleSquareByWH(topLeft, size);
-			if (rect.Contains(Vector2(m_mousePos().X, m_mousePos().Y)))
-			{
-				if (m_mouseState().leftButton)
-				{
-					m_selectedEnv = env;
-					m_small = isSmall;
-				}
-			}
-			isSmall ? DrawEnv(env, topLeft) : DrawEnv4(env, topLeft);
-			if ((isSmall == m_small) && m_selectedEnv == env || rect.Contains(Vector2(m_mousePos().X, m_mousePos().Y)))
-			{
-				// draw selected
-				auto target = m_deviceResources->GetD2DDeviceContext();
-				auto rect = MathUtil::MakeRectSquareByWH(topLeft, size);
-				target.DrawRectangle(rect, m_red());
-			}
-
-			topLeft.Y += size + 2.0f;
-		}
-	};
-	HandleEnvs(false);
-	HandleEnvs(true);
+	m_pendingSaveBtn->SetVisible(false);
 }
 
 void Game::DrawBody()
@@ -277,7 +196,7 @@ void Game::DrawBody()
 	{
 		// cursor click
 		MapHelper::SetPos4ToEnv(m_map, gridPos.X, gridPos.Y, m_small, m_selectedEnv);
-		m_pendingSave = true;
+		m_pendingSaveBtn->SetVisible(true);
 	}
 
 	auto target = m_deviceResources->GetD2DDeviceContext();
@@ -320,26 +239,8 @@ void Game::DrawRight()
 {
 	auto target = m_deviceResources->GetD2DDeviceContext();
 	auto topLeft = Point2F{ GridSize + 2.0f, 2.0f };
-	auto MoveOffset = [&topLeft]() { topLeft.Y += GridUnitSize + 2.0f; };
-
 	auto levelStr = fmt::format(L"L{0}", m_mapId);
 	target.DrawText(levelStr.c_str(), levelStr.size(), m_textFormat(), MathUtil::MakeRectSquareByWH(topLeft, 800), m_black());
-	MoveOffset();
-
-	DrawSprite(SpriteType::Left, topLeft);
-	AddClickHandler(topLeft, GridUnitSize, bind(&Game::GoOffsetMap, this, -1));
-	MoveOffset();
-
-	DrawSprite(SpriteType::Right, topLeft);
-	AddClickHandler(topLeft, GridUnitSize, bind(&Game::GoOffsetMap, this, 1));
-	MoveOffset();
-
-	if (m_pendingSave)
-	{
-		DrawSprite(SpriteType::Player2, topLeft);
-		AddClickHandler(topLeft, GridUnitSize, bind(&Game::SaveMap, this));
-		MoveOffset();
-	}
 }
 
 void Game::DrawSpecialEnvironments()
@@ -374,12 +275,73 @@ void Game::DrawSpecialEnvironments()
 	});
 }
 
+void Game::SetupRightButtons()
+{
+	auto topLeft = Point2F{ GridSize + 2.0f, 2.0f };
+	auto MoveOffset = [&topLeft]() { topLeft.Y += GridUnitSize + 2.0f; };
+
+	MoveOffset();
+	m_leftBtn = NewSpriteButton(topLeft, { SpriteUnit::P1_2_L0, SpriteUnit::P1_2_L1 });
+	m_leftBtn->SetClickHandler(bind(&Game::GoOffsetMap, this, -1));
+	m_leftBtn->SetShortCut(ShortCut::Key_(Keyboard::Left));
+
+	MoveOffset();
+	m_rightBtn = NewSpriteButton(topLeft, { SpriteUnit::P1_2_R0, SpriteUnit::P1_2_R1 });
+	m_rightBtn->SetClickHandler(bind(&Game::GoOffsetMap, this, 1));
+	m_rightBtn->SetShortCut(ShortCut::Key_(Keyboard::Right));
+
+	MoveOffset();
+	m_pendingSaveBtn = NewSpriteButton(topLeft, { SpriteUnit::P2_4_U0, SpriteUnit::P2_4_U1 });
+	m_pendingSaveBtn->SetClickHandler(bind(&Game::SaveMap, this));
+	m_pendingSaveBtn->SetShortCut(ShortCut::Parse("Ctrl+S"));
+	m_pendingSaveBtn->SetVisible(false);
+}
+
+void Game::SetupLeftButtons()
+{
+	Point2F topLeft{ -GridUnitSize - 2.0f, 2.0f };
+
+	auto HandleEnvs = [&](bool isSmall) {
+		for (size_t i = 0; i < m_envSequence.size(); ++i)
+		{
+			auto env = m_envSequence[i];
+			auto size = isSmall ? GridUnitHalfSize : GridUnitSize;
+
+			auto theBtn = NewSpriteButton(topLeft, MapHelper::GetEnvTypeUnits(env));
+			m_envButtons.push_back(theBtn);
+			
+			theBtn->SetIsX4(!isSmall);
+			theBtn->SetShortCut(isSmall ?
+				ShortCut::Shift_((Keyboard::Keys)('1' + i)) : 
+				ShortCut::Key_((Keyboard::Keys)('1' + i)));
+			theBtn->SetClickHandler([isSmall, this, env, theBtn]() {
+				m_small = isSmall;
+				m_selectedEnv = env;
+				for (auto btn : m_envButtons)
+					btn->ShowOutline(false);
+				theBtn->ShowOutline(true);
+			});
+
+			topLeft.Y += size + 2.0f;
+		}
+	};
+	HandleEnvs(false);
+	HandleEnvs(true);
+	m_envButtons[0]->ShowOutline(true);
+}
+
+SpriteButton * Game::NewSpriteButton(KennyKerr::Point2F topLeft, std::vector<SpriteUnit> unites)
+{
+	m_buttons.emplace_back(make_unique<SpriteButton>(topLeft, unites));
+	return m_buttons[m_buttons.size() - 1].get();
+}
+
 void Game::OnClick(int x, int y)
 {
 	auto pos = MathUtil::GetMousePos(x, y, m_world);
 	for (auto & button : m_buttons)
 	{
-		button.OnClick(pos);
+		button->OnClick(pos);
 	}
 }
 
@@ -388,7 +350,7 @@ void Game::OnMouseMove(int x, int y)
 	auto pos = MathUtil::GetMousePos(x, y, m_world);
 	for (auto & button : m_buttons)
 	{
-		button.OnMouseMove(pos);
+		button->OnMouseMove(pos);
 	}
 }
 
@@ -396,7 +358,7 @@ void Game::OnKeyUp(DirectX::Keyboard::Keys key)
 {
 	for (auto & button : m_buttons)
 	{
-		button.OnKeyUp(key);
+		button->OnKeyUp(key);
 	}
 }
 
