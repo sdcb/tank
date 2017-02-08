@@ -67,7 +67,6 @@ private:
 	int                                     m_mapId;
 	Tank::MapBody                           m_map;
 	Tank::MapStore                          m_mapStore;
-	std::array<Tank::EnvType, 6>            m_envSequence;
 
 	// input states
 	std::function<DirectX::Keyboard::State()> m_keyboardState;

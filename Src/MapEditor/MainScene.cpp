@@ -32,8 +32,7 @@ Game::Game() :
 	m_textFormat([&]() {return m_deviceResources->GetTextFormat(); }),
 	m_keyboardState([&]() { return m_deviceResources->GetKeyboardState(); }),
 	m_mouseState([&]() { return m_deviceResources->GetMouseState(); }),
-	m_mousePos([&]() { return m_deviceResources->GetMousePos(); }),
-	m_envSequence({ EnvType::Empty, EnvType::Grass, EnvType::Ice, EnvType::Iron, EnvType::Sea, EnvType::Wall })
+	m_mousePos([&]() { return m_deviceResources->GetMousePos(); })
 {
 	m_map = m_mapStore.LoadMap(m_mapId);
 
@@ -285,11 +284,12 @@ void Game::SetupRightButtons()
 void Game::SetupLeftButtons()
 {
 	Point2F topLeft{ -GridUnitSize - 2.0f, 2.0f };
+	std::vector<EnvType> envSeq = { EnvType::Empty, EnvType::Grass, EnvType::Ice, EnvType::Iron, EnvType::Sea, EnvType::Wall };
 
 	auto HandleEnvs = [&](bool isSmall) {
-		for (size_t i = 0; i < m_envSequence.size(); ++i)
+		for (size_t i = 0; i < envSeq.size(); ++i)
 		{
-			auto env = m_envSequence[i];
+			auto env = envSeq[i];
 			auto size = isSmall ? GridUnitHalfSize : GridUnitSize;
 
 			auto theBtn = NewSpriteButton(topLeft, MapHelper::GetEnvTypeUnits(env));
