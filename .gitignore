@@ -43,3 +43,5 @@ tank.db
 /Bin
 /Build/Release
 /Build/Debug
+/Build/x64
+/.vs
