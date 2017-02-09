@@ -2,6 +2,7 @@
 #include "GameBase.h"
 #include "SpriteUnit.h"
 #include "MathUtil.h"
+#include <SpriteButton.h>
 
 using namespace DirectX;
 using D2D1::ColorF;

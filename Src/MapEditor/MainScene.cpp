@@ -9,6 +9,7 @@
 #include "SpriteType.h"
 #include "TankDialog.h"
 #include <MathUtil.h>
+#include "SpriteButton.h"
 
 extern void ExitGame();
 

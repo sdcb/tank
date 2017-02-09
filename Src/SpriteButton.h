@@ -3,6 +3,7 @@
 #include "PreDefined.h"
 #include <functional>
 #include <dx/dx.h>
+#include "SpriteBase.h"
 
 namespace DX
 {
@@ -28,26 +29,6 @@ namespace Tank
 		bool Match(bool ctrl, bool alt, bool shift, DirectX::Keyboard::Keys key) const;
 	};
 
-	class SpriteBase
-	{
-	public:
-		typedef std::function<void(SpriteUnit unit, KennyKerr::Point2F topLeft)> DrawCall;
-
-		SpriteBase(DX::DeviceResources * dxRes);
-
-		virtual ~SpriteBase();
-		virtual void Update(DX::StepTimer const * timer) = 0;
-		virtual void Draw(DrawCall drawCall) = 0;
-
-		// window events
-		virtual void OnClick(KennyKerr::Point2F cursorPos) = 0;
-		virtual void OnMouseMove(KennyKerr::Point2F cursorPos) = 0;
-		virtual void OnKeyUp(DirectX::Keyboard::Keys key) = 0;
-
-	protected:
-		DX::DeviceResources * m_dxRes;
-	};
-
 	class SpriteButton final: public SpriteBase
 	{
 	public:
@@ -55,7 +36,7 @@ namespace Tank
 			KennyKerr::Point2F topLeft, 
 			std::vector<SpriteUnit> sprites, 
 			DX::DeviceResources * dxRes);
-		~SpriteButton();
+		~SpriteButton() override;
 
 		// position: top left
 		void SetTopLeft(KennyKerr::Point2F topLeft);

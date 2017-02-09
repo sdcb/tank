@@ -2,7 +2,13 @@
 
 #include "DeviceResources.h"
 #include "StepTimer.h"
-#include "SpriteButton.h"
+#include "SpriteBase.h"
+#include "PreDefined.h"
+
+namespace Tank
+{
+	class SpriteButton;
+}
 
 struct GameBase : public DX::IDeviceNotify
 {

@@ -228,12 +228,3 @@ std::vector<std::string> string_split(std::string str, char delim)
 	}
 	return result;
 }
-
-Tank::SpriteBase::SpriteBase(DX::DeviceResources * dxRes): 
-	m_dxRes(dxRes)
-{
-}
-
-Tank::SpriteBase::~SpriteBase()
-{
-}

@@ -30,6 +30,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\Src\SpriteBase.cpp" />
     <ClCompile Include="..\Src\SpriteButton.cpp" />
     <ClCompile Include="..\Src\SpriteUnit.cpp" />
     <ClCompile Include="..\Src\TankDialog.cpp" />
@@ -38,7 +39,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Src\TestWorld\MainScene.h" />
-    <ClInclude Include="..\Src\TestWorld\SpriteBase.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
