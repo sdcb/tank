@@ -86,5 +86,16 @@ void Tank::Player::Draw(DrawCall drawCall)
 
 void Tank::Player::DrawLive(const DrawCall & drawCall)
 {
-
+	SpriteUnit frames[] =
+	{
+		SpriteUnit::P1_1_L0,
+		SpriteUnit::P1_1_L1,
+		SpriteUnit::P1_1_U0,
+		SpriteUnit::P1_1_U1,
+		SpriteUnit::P1_1_R0,
+		SpriteUnit::P1_1_R1,
+		SpriteUnit::P1_1_D0,
+		SpriteUnit::P1_1_D1,
+	};
+	drawCall(frames[m_timer->GetSpriteId(100, _countof(frames))], m_topLeft);
 }

@@ -42,3 +42,4 @@ tank.db
 /.vs/tank/v15
 /Bin
 /.vs
+/Build/Debug
