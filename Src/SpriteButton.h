@@ -28,14 +28,33 @@ namespace Tank
 		bool Match(bool ctrl, bool alt, bool shift, DirectX::Keyboard::Keys key) const;
 	};
 
-	class SpriteButton 
+	class SpriteBase
 	{
 	public:
 		typedef std::function<void(SpriteUnit unit, KennyKerr::Point2F topLeft)> DrawCall;
 
+		SpriteBase(DX::DeviceResources * dxRes);
+
+		virtual ~SpriteBase();
+		virtual void Update(DX::StepTimer const * timer) = 0;
+		virtual void Draw(DrawCall drawCall) = 0;
+
+		// window events
+		virtual void OnClick(KennyKerr::Point2F cursorPos) = 0;
+		virtual void OnMouseMove(KennyKerr::Point2F cursorPos) = 0;
+		virtual void OnKeyUp(DirectX::Keyboard::Keys key) = 0;
+
+	protected:
+		DX::DeviceResources * m_dxRes;
+	};
+
+	class SpriteButton final: public SpriteBase
+	{
+	public:
 		SpriteButton(
 			KennyKerr::Point2F topLeft, 
-			std::vector<SpriteUnit> sprites);
+			std::vector<SpriteUnit> sprites, 
+			DX::DeviceResources * dxRes);
 		~SpriteButton();
 
 		// position: top left
@@ -47,8 +66,8 @@ namespace Tank
 		float GetCurrentSpriteSize() const;
 
 		// update/draw
-		void Update(DX::StepTimer const * timer, DX::DeviceResources * dxRes);
-		void Draw(DrawCall drawCall);
+		void Update(DX::StepTimer const * timer) override;
+		void Draw(DrawCall drawCall) override;
 
 		// shortcut key
 		ShortCut* GetShortCut() const;
@@ -69,9 +88,9 @@ namespace Tank
 		void SetClickHandler(std::function<void()> clickHandler);
 
 		// window events
-		void OnClick(KennyKerr::Point2F cursorPos);
-		void OnMouseMove(KennyKerr::Point2F cursorPos);
-		void OnKeyUp(DirectX::Keyboard::Keys key);
+		void OnClick(KennyKerr::Point2F cursorPos) override;
+		void OnMouseMove(KennyKerr::Point2F cursorPos) override;
+		void OnKeyUp(DirectX::Keyboard::Keys key) override;
 
 	private:
 		// draw outline
@@ -92,9 +111,6 @@ namespace Tank
 
 		// short-cut
 		std::unique_ptr<ShortCut> m_shortCut;
-
-		// directx resources
-		DX::DeviceResources * m_dxRes;
 
 		// visible
 		bool m_visible;

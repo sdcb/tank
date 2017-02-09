@@ -54,5 +54,5 @@ protected:
 private:
 	const Tank::TankSpriteMapArray          m_tankSpriteMap;
 	KennyKerr::Direct2D::Bitmap1            m_bmp;
-	std::vector<std::unique_ptr<Tank::SpriteButton>> m_buttons;
+	std::vector<std::unique_ptr<Tank::SpriteBase>> m_buttons;
 };

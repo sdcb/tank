@@ -13,7 +13,8 @@ using D2D1::ColorF;
 
 std::vector<std::string> string_split(std::string, char delim);
 
-Tank::SpriteButton::SpriteButton(KennyKerr::Point2F topLeft, std::vector<SpriteUnit> sprites) :
+Tank::SpriteButton::SpriteButton(KennyKerr::Point2F topLeft, std::vector<SpriteUnit> sprites, DX::DeviceResources * dxRes) :
+	SpriteBase{dxRes}, 
 	m_topLeft(topLeft),
 	m_sprites(sprites),
 	m_spriteId{ 0 },
@@ -48,14 +49,12 @@ float Tank::SpriteButton::GetCurrentSpriteSize() const
 		(m_isX4 ? 2 : 1);
 }
 
-void Tank::SpriteButton::Update(DX::StepTimer const * timer, DX::DeviceResources * dxRes)
+void Tank::SpriteButton::Update(DX::StepTimer const * timer)
 {
 	if (m_hover)
 	{
 		m_spriteId = timer->GetSpriteId(500, m_sprites.size());
 	}
-	
-	m_dxRes = dxRes;
 }
 
 void Tank::SpriteButton::Draw(DrawCall drawCall)
@@ -228,4 +227,13 @@ std::vector<std::string> string_split(std::string str, char delim)
 		result.emplace_back(item);
 	}
 	return result;
+}
+
+Tank::SpriteBase::SpriteBase(DX::DeviceResources * dxRes): 
+	m_dxRes(dxRes)
+{
+}
+
+Tank::SpriteBase::~SpriteBase()
+{
 }

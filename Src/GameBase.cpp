@@ -57,7 +57,7 @@ void GameBase::Update(DX::StepTimer const& timer)
 
 	for (auto & button : m_buttons)
 	{
-		button->Update(&m_timer, m_deviceResources.get());
+		button->Update(&m_timer);
 	}
 }
 #pragma endregion
@@ -255,6 +255,6 @@ void GameBase::GetDefaultSize(int& width, int& height) const
 
 Tank::SpriteButton * GameBase::NewSpriteButton(KennyKerr::Point2F topLeft, std::vector<Tank::SpriteUnit> unites)
 {
-	m_buttons.emplace_back(std::make_unique<Tank::SpriteButton>(topLeft, unites));
-	return m_buttons[m_buttons.size() - 1].get();
+	m_buttons.emplace_back(std::make_unique<Tank::SpriteButton>(topLeft, unites, m_deviceResources.get()));
+	return (Tank::SpriteButton*)m_buttons[m_buttons.size() - 1].get();
 }
