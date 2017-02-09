@@ -7,7 +7,7 @@ using namespace KennyKerr;
 using namespace DirectX::SimpleMath;
 using D2D1::Matrix3x2F;
 
-bool MathUtil::IsPointInSprite(Point2F mousePos, Point2F spriteTopLeft, float spriteSize)
+bool MathUtil::IsPointInSquare(Point2F mousePos, Point2F spriteTopLeft, float spriteSize)
 {
 	auto rect = MakeRectangleSquareByWH(spriteTopLeft, spriteSize);
 	return rect.Contains(Vector2(mousePos.X, mousePos.Y));

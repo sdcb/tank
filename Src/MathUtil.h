@@ -11,7 +11,7 @@ namespace Tank
 	class MathUtil final
 	{
 	public:
-		static bool IsPointInSprite(KennyKerr::Point2F mousePos, KennyKerr::Point2F spriteTopLeft, float spriteSize = GridUnitSize);
+		static bool IsPointInSquare(KennyKerr::Point2F mousePos, KennyKerr::Point2F spriteTopLeft, float spriteSize = GridUnitSize);
 		static KennyKerr::Point2F GetMousePos(int x, int y, D2D1::Matrix3x2F world);
 		static KennyKerr::Point2U MathUtil::GetMouseGridPos(KennyKerr::Point2F mousePos);
 		static KennyKerr::RectF MakeRectSquareByWH(KennyKerr::Point2F topLeft, float width);

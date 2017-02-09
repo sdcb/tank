@@ -172,10 +172,7 @@ void Game::DrawBody()
 {
 	auto mouseState = m_deviceResources->GetMouseState();
 	auto gridPos = MathUtil::GetMouseGridPos(m_mousePos());
-
-	auto fullRect = Rectangle{ 0, 0, (int)GridSize, (int)GridSize };
-	auto cursorInBody = fullRect.Contains(Vector2(m_mousePos().X, m_mousePos().Y));
-
+	auto cursorInBody = MathUtil::IsPointInSquare(m_mousePos(), Point2F(), GridSize);
 	if (mouseState.leftButton && cursorInBody)
 	{
 		// cursor click

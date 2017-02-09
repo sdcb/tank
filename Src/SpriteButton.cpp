@@ -111,7 +111,7 @@ void Tank::SpriteButton::OnClick(KennyKerr::Point2F cursorPos)
 {
 	if (m_clickHandler)
 	{
-		if (MathUtil::IsPointInSprite(cursorPos, m_topLeft, GetCurrentSpriteSize()))
+		if (MathUtil::IsPointInSquare(cursorPos, m_topLeft, GetCurrentSpriteSize()))
 		{
 			m_clickHandler();
 		}
@@ -120,7 +120,7 @@ void Tank::SpriteButton::OnClick(KennyKerr::Point2F cursorPos)
 
 void Tank::SpriteButton::OnMouseMove(KennyKerr::Point2F cursorPos)
 {
-	m_hover = MathUtil::IsPointInSprite(cursorPos, m_topLeft, GetCurrentSpriteSize());
+	m_hover = MathUtil::IsPointInSquare(cursorPos, m_topLeft, GetCurrentSpriteSize());
 }
 
 void Tank::SpriteButton::OnKeyUp(DirectX::Keyboard::Keys key)
