@@ -176,7 +176,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Src\SpriteButton.cpp" />
-    <ClCompile Include="..\Src\TankSprite.cpp" />
+    <ClCompile Include="..\Src\SpriteUnit.cpp" />
     <ClCompile Include="..\Src\TankDialog.cpp" />
     <ClCompile Include="..\Src\WinMain.cpp" />
   </ItemGroup>
@@ -192,7 +192,7 @@
     <ClInclude Include="..\Src\PreDefined.h" />
     <ClInclude Include="..\Src\SpriteButton.h" />
     <ClInclude Include="..\Src\StepTimer.h" />
-    <ClInclude Include="..\Src\TankSprite.h" />
+    <ClInclude Include="..\Src\SpriteUnit.h" />
     <ClInclude Include="..\Src\TankDialog.h" />
   </ItemGroup>
   <ItemGroup>

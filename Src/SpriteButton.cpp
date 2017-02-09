@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SpriteButton.h"
-#include "TankSprite.h"
+#include "SpriteUnit.h"
 #include <DeviceResources.h>
 #include "StepTimer.h"
 #include "MathUtil.h"
@@ -18,7 +18,8 @@ Tank::SpriteButton::SpriteButton(KennyKerr::Point2F topLeft, std::vector<SpriteU
 	m_sprites(sprites),
 	m_spriteId{ 0 },
 	m_isX4{ false },
-	m_visible{ true }
+	m_visible{ true }, 
+	m_showOutline{ false }
 {
 }
 
@@ -111,7 +112,7 @@ void Tank::SpriteButton::OnClick(KennyKerr::Point2F cursorPos)
 {
 	if (m_clickHandler)
 	{
-		if (MathUtil::IsPointInSquare(cursorPos, m_topLeft, GetCurrentSpriteSize()))
+		if (Math::IsPointInSquare(cursorPos, m_topLeft, GetCurrentSpriteSize()))
 		{
 			m_clickHandler();
 		}
@@ -120,7 +121,7 @@ void Tank::SpriteButton::OnClick(KennyKerr::Point2F cursorPos)
 
 void Tank::SpriteButton::OnMouseMove(KennyKerr::Point2F cursorPos)
 {
-	m_hover = MathUtil::IsPointInSquare(cursorPos, m_topLeft, GetCurrentSpriteSize());
+	m_hover = Math::IsPointInSquare(cursorPos, m_topLeft, GetCurrentSpriteSize());
 }
 
 void Tank::SpriteButton::OnKeyUp(DirectX::Keyboard::Keys key)
@@ -152,7 +153,7 @@ void Tank::SpriteButton::DrawOutline()
 		topLeft.Y + size,
 	};
 	auto target = m_dxRes->GetD2DDeviceContext();
-	target.DrawRectangle(rect, m_dxRes->GetOrCreateColor(ColorF::Red));
+	target.DrawRectangle(rect, m_dxRes->GetOrCreateColor(ColorF::Red), Math::Clamp(size / 16.0f, 0.0f, 1.0f));
 }
 
 Tank::ShortCut::ShortCut() :

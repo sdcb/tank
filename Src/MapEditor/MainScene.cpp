@@ -4,7 +4,7 @@
 
 #include "pch.h"
 #include "MainScene.h"
-#include "TankSprite.h"
+#include "SpriteUnit.h"
 #include "MapHelper.h"
 #include "SpriteType.h"
 #include "TankDialog.h"
@@ -25,7 +25,6 @@ using Microsoft::WRL::ComPtr;
 
 Game::Game() :
 	m_mapId(1),
-	m_tankSpriteMap(CreateTankSpriteMap()),
 	m_selectedEnv(EnvType::Empty),
 	m_black([&]() {return m_deviceResources->GetOrCreateColor(ColorF::Black); }),
 	m_red([&]() {return m_deviceResources->GetOrCreateColor(ColorF::Red); }),
@@ -40,81 +39,20 @@ Game::Game() :
 	SetupRightButtons();	
 }
 
-// Updates the world.
-void Game::Update(DX::StepTimer const& timer)
-{
-	m_deviceResources->Update();
-
-	// TODO: Add your game logic here.
-	for (auto & button : m_buttons)
-	{
-		button->Update(&m_timer, m_deviceResources.get());
-	}
-}
-
 void Game::Draw(KennyKerr::Direct2D::DeviceContext target)
 {
 	target.SetTransform(m_world);
 	target.FillRectangle(RectF{ 0, 0, (float)GridSize, (float)GridSize }, m_black());
-	for (auto & button : m_buttons)
-	{
-		button->Draw([&](SpriteUnit id, Point2F topLeft) {
-			DrawUnit(id, topLeft);
-		});
-	}
 	DrawBody();
 	DrawRight();
-}
-
-// These are the resources that depend on the device.
-void Game::CreateDeviceResources()
-{
-	auto device = m_deviceResources->GetD3DDevice();
-	auto target = m_deviceResources->GetD2DDeviceContext();
-	auto wic = m_deviceResources->GetWicFactory();
-
-	// TODO: Initialize device dependent objects here (independent of window size).
-	auto stream = wic.CreateStream();
-	HR(stream.InitializeFromFilename(L"All.png", GENERIC_READ));
-	auto decoder = wic.CreateFormatConverter();
-	decoder.Initialize(wic.CreateDecoderFromStream(stream).GetFrame());
-	m_bmp = target.CreateBitmapFromWicBitmap1(decoder);
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
 void Game::CreateWindowSizeResources()
 {
-	// TODO: Initialize windows-size dependent objects here.
 	auto target = m_deviceResources->GetD2DDeviceContext();
-	auto size = target.GetSize();
-	auto scale = size.Height / GridSize;
-	auto offsetX = (size.Width - size.Height) / 2;
-	m_world =
-		Matrix3x2F::Scale(scale, scale) *
-		Matrix3x2F::Translation(offsetX, 0);
+	m_world = Math::CreateWorldTransform(target.GetSize());
 	m_deviceResources->SetWorldTranslation(m_world);
-}
-
-void Game::DrawUnit(SpriteUnit id, KennyKerr::Point2F topLeft)
-{
-	if (id == SpriteUnit::Env_Empty) return;
-	auto imagePos = m_tankSpriteMap[(size_t)id];
-	RectF source
-	{
-		imagePos.Left,
-		imagePos.Top,
-		imagePos.Right,
-		imagePos.Bottom
-	};
-	RectF destination
-	{
-		topLeft.X,
-		topLeft.Y,
-		topLeft.X + source.Width(),
-		topLeft.Y + source.Height()
-	};
-	m_deviceResources->GetD2DDeviceContext().DrawBitmap(
-		m_bmp, destination, 1.0f, BitmapInterpolationMode::NearestNeighbor, source);
 }
 
 void Game::DrawEnv(EnvType env, KennyKerr::Point2F topLeft)
@@ -157,7 +95,7 @@ void Game::GoOffsetMap(int offset)
 	{
 		return;
 	}
-	m_mapId = clamp(m_mapId + offset, 1, INFINITE);
+	m_mapId = Math::Clamp(m_mapId + offset, 1, MAXINT);
 	m_map = m_mapStore.LoadMap(m_mapId);
 	m_pendingSaveBtn->SetVisible(false);
 }
@@ -171,8 +109,8 @@ void Game::SaveMap()
 void Game::DrawBody()
 {
 	auto mouseState = m_deviceResources->GetMouseState();
-	auto gridPos = MathUtil::GetMouseGridPos(m_mousePos());
-	auto cursorInBody = MathUtil::IsPointInSquare(m_mousePos(), Point2F(), GridSize);
+	auto gridPos = Math::GetMouseGridPos(m_mousePos());
+	auto cursorInBody = Math::IsPointInSquare(m_mousePos(), Point2F(), GridSize);
 	if (mouseState.leftButton && cursorInBody)
 	{
 		// cursor click
@@ -211,7 +149,7 @@ void Game::DrawBody()
 			GridUnitHalfSize * gridPos.X,
 			GridUnitHalfSize * gridPos.Y
 		};
-		auto currentRect = MathUtil::MakeRectSquareByWH(topLeft, times * GridUnitHalfSize);
+		auto currentRect = Math::MakeRectSquareByWH(topLeft, times * GridUnitHalfSize);
 		target.DrawRectangle(currentRect, m_red());
 	}
 }
@@ -221,7 +159,7 @@ void Game::DrawRight()
 	auto target = m_deviceResources->GetD2DDeviceContext();
 	auto topLeft = Point2F{ GridSize + 2.0f, 2.0f };
 	auto levelStr = fmt::format(L"L{0}", m_mapId);
-	target.DrawText(levelStr.c_str(), levelStr.size(), m_textFormat(), MathUtil::MakeRectSquareByWH(topLeft, 800), m_black());
+	target.DrawText(levelStr.c_str(), levelStr.size(), m_textFormat(), Math::MakeRectSquareByWH(topLeft, 800), m_black());
 }
 
 void Game::DrawSpecialEnvironments()
@@ -310,42 +248,4 @@ void Game::SetupLeftButtons()
 	HandleEnvs(false);
 	HandleEnvs(true);
 	m_envButtons[0]->ShowOutline(true);
-}
-
-SpriteButton * Game::NewSpriteButton(KennyKerr::Point2F topLeft, std::vector<SpriteUnit> unites)
-{
-	m_buttons.emplace_back(make_unique<SpriteButton>(topLeft, unites));
-	return m_buttons[m_buttons.size() - 1].get();
-}
-
-void Game::OnClick(int x, int y)
-{
-	auto pos = MathUtil::GetMousePos(x, y, m_world);
-	for (auto & button : m_buttons)
-	{
-		button->OnClick(pos);
-	}
-}
-
-void Game::OnMouseMove(int x, int y)
-{
-	auto pos = MathUtil::GetMousePos(x, y, m_world);
-	for (auto & button : m_buttons)
-	{
-		button->OnMouseMove(pos);
-	}
-}
-
-void Game::OnKeyUp(DirectX::Keyboard::Keys key)
-{
-	for (auto & button : m_buttons)
-	{
-		button->OnKeyUp(key);
-	}
-}
-
-void Game::OnDeviceLost()
-{
-	// TODO: Add Direct3D resource cleanup here.
-	m_bmp.Reset();
 }

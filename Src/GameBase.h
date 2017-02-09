@@ -2,6 +2,7 @@
 
 #include "DeviceResources.h"
 #include "StepTimer.h"
+#include "SpriteButton.h"
 
 struct GameBase : public DX::IDeviceNotify
 {
@@ -35,8 +36,13 @@ public:
 	virtual void OnMouseMove(int x, int y);
 	virtual void OnKeyUp(DirectX::Keyboard::Keys key);
 
+	void DrawUnit(Tank::SpriteUnit id, KennyKerr::Point2F center);
+
 	// Properties
 	virtual void GetDefaultSize(int& width, int& height) const;
+
+	// create new sprite button
+	Tank::SpriteButton* NewSpriteButton(KennyKerr::Point2F topLeft, std::vector<Tank::SpriteUnit> unites);
 
 protected:
 	// DirectX related device resources.
@@ -44,4 +50,9 @@ protected:
 
 	// Rendering loop timer.
 	DX::StepTimer                           m_timer;
+
+private:
+	const Tank::TankSpriteMapArray          m_tankSpriteMap;
+	KennyKerr::Direct2D::Bitmap1            m_bmp;
+	std::vector<std::unique_ptr<Tank::SpriteButton>> m_buttons;
 };

@@ -30,15 +30,15 @@
     <ClCompile Include="..\Src\TankDialog.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\Src\TankSprite.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="..\Src\WinMain.cpp">
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="..\Src\TestWorld\MainScene.cpp" />
     <ClCompile Include="..\Src\MapEditor\MapStore.cpp">
       <Filter>MapEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\SpriteUnit.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

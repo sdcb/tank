@@ -7,30 +7,30 @@ using namespace KennyKerr;
 using namespace DirectX::SimpleMath;
 using D2D1::Matrix3x2F;
 
-bool MathUtil::IsPointInSquare(Point2F mousePos, Point2F spriteTopLeft, float spriteSize)
+bool Math::IsPointInSquare(Point2F mousePos, Point2F spriteTopLeft, float spriteSize)
 {
 	auto rect = MakeRectangleSquareByWH(spriteTopLeft, spriteSize);
 	return rect.Contains(Vector2(mousePos.X, mousePos.Y));
 }
 
-Point2F MathUtil::GetMousePos(int x, int y, Matrix3x2F world)
+Point2F Math::GetMousePos(int x, int y, Matrix3x2F world)
 {
 	auto worldCopy = Matrix3x2F(world);
 	worldCopy.Invert();
 	return worldCopy.TransformPoint({ (float)x, (float)y });
 }
 
-Point2U MathUtil::GetMouseGridPos(Point2F mousePos)
+Point2U Math::GetMouseGridPos(Point2F mousePos)
 {
 	Point2U gridPos
 	{
-		(unsigned int)clamp(mousePos.X / GridUnitHalfSize, 0, GridCountDouble - 1),
-		(unsigned int)clamp(mousePos.Y / GridUnitHalfSize, 0, GridCountDouble - 1)
+		(unsigned int)Math::Clamp(int(mousePos.X / GridUnitHalfSize), 0, GridCountDouble - 1),
+		(unsigned int)Math::Clamp(int(mousePos.Y / GridUnitHalfSize), 0, GridCountDouble - 1)
 	};
 	return gridPos;
 }
 
-RectF MathUtil::MakeRectSquareByWH(Point2F topLeft, float width)
+RectF Math::MakeRectSquareByWH(Point2F topLeft, float width)
 {
 	return RectF
 	{
@@ -41,7 +41,7 @@ RectF MathUtil::MakeRectSquareByWH(Point2F topLeft, float width)
 	};
 }
 
-Rectangle MathUtil::MakeRectangleSquareByWH(Point2F topLeft, float width)
+Rectangle Math::MakeRectangleSquareByWH(Point2F topLeft, float width)
 {
 	return Rectangle
 	{
@@ -50,4 +50,27 @@ Rectangle MathUtil::MakeRectangleSquareByWH(Point2F topLeft, float width)
 		long(width),
 		long(width)
 	};
+}
+
+int Tank::Math::Clamp(int v, int min, int max)
+{
+	if (v < min) return min;
+	if (v > max) return max;
+	return v;
+}
+
+float Tank::Math::Clamp(float v, float min, float max)
+{
+	if (v < min) return min;
+	if (v > max) return max;
+	return v;
+}
+
+D2D1::Matrix3x2F Tank::Math::CreateWorldTransform(KennyKerr::SizeF size)
+{
+	auto scale = size.Height / GridSize;
+	auto offsetX = (size.Width - size.Height) / 2;
+	return 
+		Matrix3x2F::Scale(scale, scale) *
+		Matrix3x2F::Translation(offsetX, 0);
 }

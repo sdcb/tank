@@ -1,11 +1,18 @@
 #include "pch.h"
 #include "GameBase.h"
+#include "SpriteUnit.h"
+#include "MathUtil.h"
 
 using namespace DirectX;
 using D2D1::ColorF;
 using D2D1::Matrix3x2F;
+using namespace Tank;
+using namespace std;
+using namespace KennyKerr;
+using namespace KennyKerr::Direct2D;
 
-GameBase::GameBase()
+GameBase::GameBase(): 
+	m_tankSpriteMap(CreateTankSpriteMap())
 {
 	m_deviceResources = std::make_unique<DX::DeviceResources>();
 	m_deviceResources->RegisterDeviceNotify(this);
@@ -46,6 +53,12 @@ void GameBase::Tick()
 // Updates the world.
 void GameBase::Update(DX::StepTimer const& timer)
 {
+	m_deviceResources->Update();
+
+	for (auto & button : m_buttons)
+	{
+		button->Update(&m_timer, m_deviceResources.get());
+	}
 }
 #pragma endregion
 
@@ -70,6 +83,12 @@ void GameBase::Render()
 	// TODO: Add your rendering code here.
 	target.BeginDraw();
 	Draw(target);
+	for (auto & button : m_buttons)
+	{
+		button->Draw([&](SpriteUnit id, Point2F topLeft) {
+			DrawUnit(id, topLeft);
+		});
+	}
 	
 	if (state.LeftControl && state.LeftAlt && state.F || _DEBUG)
 	{
@@ -85,6 +104,28 @@ void GameBase::Render()
 
 	// Show the new frame.
 	m_deviceResources->Present();
+}
+
+void GameBase::DrawUnit(SpriteUnit id, KennyKerr::Point2F topLeft)
+{
+	if (id == SpriteUnit::Env_Empty) return;
+	auto imagePos = m_tankSpriteMap[(size_t)id];
+	RectF source
+	{
+		imagePos.Left,
+		imagePos.Top,
+		imagePos.Right,
+		imagePos.Bottom
+	};
+	RectF destination
+	{
+		topLeft.X,
+		topLeft.Y,
+		topLeft.X + source.Width(),
+		topLeft.Y + source.Height()
+	};
+	m_deviceResources->GetD2DDeviceContext().DrawBitmap(
+		m_bmp, destination, 1.0f, BitmapInterpolationMode::NearestNeighbor, source);
 }
 
 // Helper method to clear the back buffers.
@@ -109,19 +150,31 @@ void GameBase::Clear()
 }
 void GameBase::Draw(KennyKerr::Direct2D::DeviceContext target)
 {
+	target.SetTransform(m_deviceResources->GetWorldTranslation());
+	
 }
 #pragma endregion
 
 void GameBase::CreateDeviceResources()
 {
+	auto wic = m_deviceResources->GetWicFactory();
+	auto target = m_deviceResources->GetD2DDeviceContext();
+
+	auto stream = wic.CreateStream();
+	HR(stream.InitializeFromFilename(L"All.png", GENERIC_READ));
+	auto decoder = wic.CreateFormatConverter();
+	decoder.Initialize(wic.CreateDecoderFromStream(stream).GetFrame());
+	m_bmp = target.CreateBitmapFromWicBitmap1(decoder);
 }
 
 void GameBase::CreateWindowSizeResources()
 {
+	
 }
 
 void GameBase::OnDeviceLost()
 {
+	m_bmp.Reset();
 }
 
 void GameBase::OnDeviceRestored()
@@ -167,15 +220,30 @@ void GameBase::OnWindowSizeChanged(int width, int height)
 
 void GameBase::OnClick(int x, int y)
 {
+	auto pos = Math::GetMousePos(x, y, m_deviceResources->GetWorldTranslation());
+	for (auto & button : m_buttons)
+	{
+		button->OnClick(pos);
+	}
 }
 
 void GameBase::OnMouseMove(int x, int y)
 {
+	auto pos = Math::GetMousePos(x, y, m_deviceResources->GetWorldTranslation());
+	for (auto & button : m_buttons)
+	{
+		button->OnMouseMove(pos);
+	}
 }
 
 void GameBase::OnKeyUp(DirectX::Keyboard::Keys key)
 {
+	for (auto & button : m_buttons)
+	{
+		button->OnKeyUp(key);
+	}
 }
+#pragma endregion
 
 // Properties
 void GameBase::GetDefaultSize(int& width, int& height) const
@@ -184,4 +252,9 @@ void GameBase::GetDefaultSize(int& width, int& height) const
 	width = 832;
 	height = 624;
 }
-#pragma endregion
+
+Tank::SpriteButton * GameBase::NewSpriteButton(KennyKerr::Point2F topLeft, std::vector<Tank::SpriteUnit> unites)
+{
+	m_buttons.emplace_back(std::make_unique<Tank::SpriteButton>(topLeft, unites));
+	return m_buttons[m_buttons.size() - 1].get();
+}

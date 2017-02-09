@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "MapHelper.h"
 #include <regex>
-#include "TankSprite.h"
+#include "SpriteUnit.h"
+#include <MathUtil.h>
 
 using namespace std;
 using namespace Tank;
@@ -149,8 +150,8 @@ void Tank::MapHelper::SetPos4ToEnv(MapBody& body, int x, int y, bool isSmall, En
 	body[y][x] = type;
 	if (!isSmall)
 	{
-		auto ox = clamp(x + 1, 0, GridCountDouble - 1);
-		auto oy = clamp(y + 1, 0, GridCountDouble - 1);
+		auto ox = Math::Clamp(x + 1, 0, GridCountDouble - 1);
+		auto oy = Math::Clamp(y + 1, 0, GridCountDouble - 1);
 
 		body[y][ox] = type;
 		body[oy][x] = type;

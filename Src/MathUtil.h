@@ -8,13 +8,16 @@
 
 namespace Tank
 {
-	class MathUtil final
+	class Math final
 	{
 	public:
 		static bool IsPointInSquare(KennyKerr::Point2F mousePos, KennyKerr::Point2F spriteTopLeft, float spriteSize = GridUnitSize);
 		static KennyKerr::Point2F GetMousePos(int x, int y, D2D1::Matrix3x2F world);
-		static KennyKerr::Point2U MathUtil::GetMouseGridPos(KennyKerr::Point2F mousePos);
+		static KennyKerr::Point2U Math::GetMouseGridPos(KennyKerr::Point2F mousePos);
 		static KennyKerr::RectF MakeRectSquareByWH(KennyKerr::Point2F topLeft, float width);
 		static DirectX::SimpleMath::Rectangle MakeRectangleSquareByWH(KennyKerr::Point2F topLeft, float width);
+		static int Clamp(int v, int min, int max);
+		static float Clamp(float v, float min, float max);
+		static D2D1::Matrix3x2F CreateWorldTransform(KennyKerr::SizeF size);
 	};
 }

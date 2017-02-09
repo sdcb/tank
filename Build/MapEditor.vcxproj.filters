@@ -15,19 +15,19 @@
     <ClCompile Include="..\Src\pch.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\Src\TankSprite.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="..\Src\WinMain.cpp">
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="..\Src\TankDialog.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="..\Src\SpriteButton.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
     <ClCompile Include="..\Src\MathUtil.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\Src\SpriteButton.cpp">
+    <ClCompile Include="..\Src\SpriteUnit.cpp">
       <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
@@ -53,16 +53,16 @@
     <ClInclude Include="..\Src\StepTimer.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\Src\TankSprite.h">
+    <ClInclude Include="..\Src\TankDialog.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\Src\TankDialog.h">
+    <ClInclude Include="..\Src\SpriteButton.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="..\Src\MathUtil.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\Src\SpriteButton.h">
+    <ClInclude Include="..\Src\SpriteUnit.h">
       <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>

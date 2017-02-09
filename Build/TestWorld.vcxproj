@@ -31,8 +31,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Src\SpriteButton.cpp" />
+    <ClCompile Include="..\Src\SpriteUnit.cpp" />
     <ClCompile Include="..\Src\TankDialog.cpp" />
-    <ClCompile Include="..\Src\TankSprite.cpp" />
     <ClCompile Include="..\Src\TestWorld\MainScene.cpp" />
     <ClCompile Include="..\Src\WinMain.cpp" />
   </ItemGroup>

@@ -13,12 +13,4 @@ namespace Tank
 
 	typedef std::array<std::array<EnvType, GridCountDouble>, GridCountDouble> MapBody;
 	typedef std::array<KennyKerr::RectF, TankSpriteCount> TankSpriteMapArray;
-
-	template <typename T, typename TMin, typename TMax>
-	T clamp(T v, TMin min, TMax max)
-	{
-		if ((TMin)v < min) return (T)min;
-		if ((TMax)v > max) return (T)max;
-		return v;
-	}
 }
