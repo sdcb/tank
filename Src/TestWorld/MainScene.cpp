@@ -2,7 +2,9 @@
 #include "MainScene.h"
 #include <MathUtil.h>
 #include <SpriteUnit.h>
+#include "MapSprite.h"
 
+using namespace std;
 using namespace Tank;
 using namespace KennyKerr;
 
@@ -11,7 +13,7 @@ Game::Game():
 	m_mapStore()
 {
 	m_map = m_mapStore.LoadMap(m_mapId);
-	auto btn = NewSpriteButton(Point2F{ 0.0f, 0.0f }, { SpriteUnit::Exp_1, SpriteUnit::Exp_2, SpriteUnit::Exp_3, SpriteUnit::Exp_0 });
+	m_sprites.push_back(unique_ptr<Player>(new Player( m_deviceResources.get(), Point2F{8.0f, 8.0f}, PlayerId::_1 )));
 }
 
 void Game::CreateWindowSizeResources()

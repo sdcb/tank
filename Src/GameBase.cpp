@@ -56,7 +56,7 @@ void GameBase::Update(DX::StepTimer const& timer)
 {
 	m_deviceResources->Update();
 
-	for (auto & button : m_buttons)
+	for (auto & button : m_sprites)
 	{
 		button->Update(&m_timer);
 	}
@@ -84,7 +84,7 @@ void GameBase::Render()
 	// TODO: Add your rendering code here.
 	target.BeginDraw();
 	Draw(target);
-	for (auto & button : m_buttons)
+	for (auto & button : m_sprites)
 	{
 		button->Draw([&](SpriteUnit id, Point2F topLeft) {
 			DrawUnit(id, topLeft);
@@ -222,7 +222,7 @@ void GameBase::OnWindowSizeChanged(int width, int height)
 void GameBase::OnClick(int x, int y)
 {
 	auto pos = Math::GetMousePos(x, y, m_deviceResources->GetWorldTranslation());
-	for (auto & button : m_buttons)
+	for (auto & button : m_sprites)
 	{
 		button->OnClick(pos);
 	}
@@ -231,7 +231,7 @@ void GameBase::OnClick(int x, int y)
 void GameBase::OnMouseMove(int x, int y)
 {
 	auto pos = Math::GetMousePos(x, y, m_deviceResources->GetWorldTranslation());
-	for (auto & button : m_buttons)
+	for (auto & button : m_sprites)
 	{
 		button->OnMouseMove(pos);
 	}
@@ -239,7 +239,7 @@ void GameBase::OnMouseMove(int x, int y)
 
 void GameBase::OnKeyUp(DirectX::Keyboard::Keys key)
 {
-	for (auto & button : m_buttons)
+	for (auto & button : m_sprites)
 	{
 		button->OnKeyUp(key);
 	}
@@ -256,6 +256,6 @@ void GameBase::GetDefaultSize(int& width, int& height) const
 
 Tank::SpriteButton * GameBase::NewSpriteButton(KennyKerr::Point2F topLeft, std::vector<Tank::SpriteUnit> unites)
 {
-	m_buttons.emplace_back(std::make_unique<Tank::SpriteButton>(topLeft, unites, m_deviceResources.get()));
-	return (Tank::SpriteButton*)m_buttons[m_buttons.size() - 1].get();
+	m_sprites.emplace_back(std::make_unique<Tank::SpriteButton>(topLeft, unites, m_deviceResources.get()));
+	return (Tank::SpriteButton*)m_sprites[m_sprites.size() - 1].get();
 }

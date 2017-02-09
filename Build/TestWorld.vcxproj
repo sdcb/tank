@@ -35,10 +35,12 @@
     <ClCompile Include="..\Src\SpriteUnit.cpp" />
     <ClCompile Include="..\Src\TankDialog.cpp" />
     <ClCompile Include="..\Src\TestWorld\MainScene.cpp" />
+    <ClCompile Include="..\Src\TestWorld\MapSprite.cpp" />
     <ClCompile Include="..\Src\WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Src\TestWorld\MainScene.h" />
+    <ClInclude Include="..\Src\TestWorld\MapSprite.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

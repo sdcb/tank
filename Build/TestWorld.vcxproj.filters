@@ -43,8 +43,10 @@
     <ClCompile Include="..\Src\SpriteBase.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="..\Src\TestWorld\MapSprite.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Src\TestWorld\MainScene.h" />
+    <ClInclude Include="..\Src\TestWorld\MapSprite.h" />
   </ItemGroup>
 </Project>

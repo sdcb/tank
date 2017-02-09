@@ -25,9 +25,9 @@ namespace Tank
 		virtual void Draw(DrawCall drawCall) = 0;
 
 		// window events
-		virtual void OnClick(KennyKerr::Point2F cursorPos) = 0;
-		virtual void OnMouseMove(KennyKerr::Point2F cursorPos) = 0;
-		virtual void OnKeyUp(DirectX::Keyboard::Keys key) = 0;
+		virtual void OnClick(KennyKerr::Point2F cursorPos);
+		virtual void OnMouseMove(KennyKerr::Point2F cursorPos);
+		virtual void OnKeyUp(DirectX::Keyboard::Keys key);
 
 	protected:
 		DX::DeviceResources * m_dxRes;
