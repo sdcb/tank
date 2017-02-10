@@ -74,3 +74,25 @@ D2D1::Matrix3x2F Tank::Math::CreateWorldTransform(KennyKerr::SizeF size)
 		Matrix3x2F::Scale(scale, scale) *
 		Matrix3x2F::Translation(offsetX, 0);
 }
+
+KennyKerr::Point2F Tank::Math::ByDirection(KennyKerr::Point2F p, Direction direction, float speed)
+{
+	switch (direction)
+	{
+	case Direction::Left:
+		p.X -= speed;
+		break;
+	case Direction::Up:
+		p.Y -= speed;
+		break;
+	case Direction::Right:
+		p.X += speed;
+		break;
+	case Direction::Down:
+		p.Y += speed;
+		break;
+	default:
+		throw std::exception{ "unknown direction." };
+	}
+	return p;
+}

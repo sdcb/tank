@@ -8,6 +8,14 @@
 
 namespace Tank
 {
+	enum class Direction
+	{
+		Left,
+		Up,
+		Right,
+		Down,
+	};
+
 	class Math final
 	{
 	public:
@@ -19,5 +27,6 @@ namespace Tank
 		static int Clamp(int v, int min, int max);
 		static float Clamp(float v, float min, float max);
 		static D2D1::Matrix3x2F CreateWorldTransform(KennyKerr::SizeF size);
+		static KennyKerr::Point2F ByDirection(KennyKerr::Point2F p, Direction direction, float speed);
 	};
 }

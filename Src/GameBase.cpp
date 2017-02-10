@@ -13,7 +13,7 @@ using namespace KennyKerr;
 using namespace KennyKerr::Direct2D;
 
 GameBase::GameBase(): 
-	m_tankSpriteMap(CreateTankSpriteMap())
+	m_tankSpriteMap(SpriteUtil::GetSpriteMap())
 {
 	m_deviceResources = std::make_unique<DX::DeviceResources>();
 	m_deviceResources->RegisterDeviceNotify(this);

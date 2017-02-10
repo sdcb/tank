@@ -3,9 +3,12 @@
 #include <PreDefined.h>
 #include <SpriteBase.h>
 #include <vector>
+#include <StepTimer.h>
 
 namespace Tank
 {
+	enum class Direction;
+
 	enum class PlayerLife
 	{
 		Borning, 
@@ -20,24 +23,71 @@ namespace Tank
 		_2, 
 	};
 
-	class Player final : public SpriteBase
+	enum class PlayerLevel
+	{
+		_1, 
+		_2, 
+		_3, 
+	};
+
+	class TankLife : public SpriteBase
 	{
 	public:
-		Player(DX::DeviceResources * dxRes, KennyKerr::Point2F topLeft, PlayerId playerId);
-		virtual void Update(DX::StepTimer const * timer) override;
-		virtual void Draw(DrawCall drawCall) override;
+		typedef std::array<SpriteUnit, 2> MovingFrames;
 
-	private:
-		void DrawLive(const DrawCall& drawCall);
+		TankLife(DX::DeviceResources * dxRes, KennyKerr::Point2F topLeft);
+		void Update(DX::StepTimer const * timer) override;
+		void Draw(DrawCall drawCall) override;
+
+		Direction GetDirection() const { return m_direction; }
+		void SetDirection(Direction direction) { m_direction = direction; }
+
+	protected:
+		virtual void UpdatePerSecond() = 0;
+		virtual void UpdateLive() = 0;
+		virtual void DrawLive(const DrawCall & drawCall) = 0;
+		virtual float GetSpeed() = 0;
 
 		KennyKerr::Point2F    m_topLeft;
 		DX::StepTimer const * m_timer;
-		const PlayerId        m_playerId;
+		DX::StepTimer m_secondTimer;
 
-		PlayerLife m_life         = PlayerLife::Borning;
-		int        m_dieingFrame  = 0;
-		int        m_moveingFrame = 0;
-		double     m_dieingTime   = 0;
-		double     m_bornTime     = 0;
+		PlayerLife m_life = PlayerLife::Borning;
+		Direction  m_direction;
+		double     m_dieingTime = 0;
+		double     m_bornTime = 0;
+		int        m_dieingFrame = 0;
+	};
+
+	class Enemy final : public TankLife
+	{
+		
+	};
+
+	class Player final : public TankLife
+	{
+	public:
+		Player(DX::DeviceResources * dxRes, KennyKerr::Point2F topLeft, PlayerId playerId);
+
+		PlayerId GetPlayerId() const { return m_playerId; }
+		void SetPlayerId(PlayerId playerId) { m_playerId = playerId; }
+
+		PlayerLevel GetPlayerLevel() const { return m_playerLevel; }
+		void SetPlayerLevel(PlayerLevel level) { m_playerLevel = level; }
+		
+
+	private:
+		void DrawLive(const DrawCall& drawCall) override;
+		virtual void UpdateLive() override;
+		virtual void UpdatePerSecond() override;
+		virtual float GetSpeed() override;
+
+		PlayerId    m_playerId;
+		int         m_movingFrame = 0;
+		PlayerLevel m_playerLevel = PlayerLevel::_1;
+
+		MovingFrames m_liveMovingFrames;
+
+		static MovingFrames GetSprites(PlayerId id, PlayerLevel level, Direction direction);
 	};
 }

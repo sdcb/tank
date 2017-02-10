@@ -235,7 +235,11 @@ namespace Tank
 
 	SpriteUnit operator+(SpriteUnit left, int v);
 
-	const std::array<KennyKerr::RectF, (size_t)SpriteUnit::Count> CreateTankSpriteMap();
+	class SpriteUtil final
+	{
+	public:
+		static const std::array<KennyKerr::RectF, (size_t)SpriteUnit::Count> GetSpriteMap();
 
-	KennyKerr::SizeF GetSpriteUnitSize(SpriteUnit id);
+		static KennyKerr::SizeF GetUnitSize(SpriteUnit id);
+	};
 }

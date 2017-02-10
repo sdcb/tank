@@ -1,22 +1,28 @@
 #include "pch.h"
 #include "MapSprite.h"
 #include <StepTimer.h>
+#include <MathUtil.h>
 
+using namespace Tank;
 using namespace KennyKerr;
 
-Tank::Player::Player(DX::DeviceResources * dxRes, Point2F topLeft, PlayerId playerId): 
-	SpriteBase{ dxRes }, 
-	m_topLeft(topLeft), 
-	m_playerId{ playerId }, 
-	m_life(PlayerLife::Borning), 
-	m_bornTime{ 0.0 }
+Tank::TankLife::TankLife(DX::DeviceResources * dxRes, KennyKerr::Point2F topLeft) :
+	SpriteBase{ dxRes },
+	m_topLeft{ topLeft }, 
+	m_secondTimer{},
+	m_direction{ Direction::Up }
 {
+	m_secondTimer.SetFixedTimeStep(true);
+	m_secondTimer.SetTargetElapsedSeconds(1.0);
 }
 
-void Tank::Player::Update(DX::StepTimer const * timer)
+void Tank::TankLife::Update(DX::StepTimer const * timer)
 {
 	const double BornTime = 1.0f;
 	m_timer = timer;
+	m_secondTimer.Tick([&]() {
+		UpdatePerSecond();
+	});
 
 	auto time = timer->GetTotalSeconds();
 	if (m_life == PlayerLife::Borning && m_bornTime == 0.0)
@@ -29,10 +35,9 @@ void Tank::Player::Update(DX::StepTimer const * timer)
 	{
 		m_life = PlayerLife::Live;
 	}
-	else if (m_life == PlayerLife::Live && elapsedSinceBorn > BornTime * 2)
+	else if (m_life == PlayerLife::Live)
 	{
-		m_life = PlayerLife::Dieing;
-		m_dieingTime = time;
+		UpdateLive();
 	}
 	else if (m_life == PlayerLife::Dieing)
 	{
@@ -46,13 +51,13 @@ void Tank::Player::Update(DX::StepTimer const * timer)
 	}
 }
 
-void Tank::Player::Draw(DrawCall drawCall)
+void Tank::TankLife::Draw(DrawCall drawCall)
 {
 	if (m_life == PlayerLife::Borning)
 	{
-		SpriteUnit frames[] = 
+		SpriteUnit frames[] =
 		{
-			SpriteUnit::Star_0, 
+			SpriteUnit::Star_0,
 			SpriteUnit::Star_1,
 			SpriteUnit::Star_2,
 			SpriteUnit::Star_3,
@@ -65,9 +70,9 @@ void Tank::Player::Draw(DrawCall drawCall)
 	}
 	else if (m_life == PlayerLife::Dieing)
 	{
-		SpriteUnit frames[] = 
+		SpriteUnit frames[] =
 		{
-			SpriteUnit::Exp_1, 
+			SpriteUnit::Exp_1,
 			SpriteUnit::Exp_2,
 			SpriteUnit::Exp_3,
 			SpriteUnit::Exp_0,
@@ -84,18 +89,47 @@ void Tank::Player::Draw(DrawCall drawCall)
 	}
 }
 
+
+Tank::Player::Player(DX::DeviceResources * dxRes, Point2F topLeft, PlayerId playerId) :
+	TankLife{ dxRes, topLeft },
+	m_playerId{ playerId }
+{
+}
+
 void Tank::Player::DrawLive(const DrawCall & drawCall)
 {
-	SpriteUnit frames[] =
+	drawCall(m_liveMovingFrames[m_movingFrame], m_topLeft);
+}
+
+void Tank::Player::UpdateLive()
+{
+	m_topLeft = Math::ByDirection(m_topLeft, m_direction, GetSpeed());
+	m_liveMovingFrames = GetSprites(m_playerId, m_playerLevel, m_direction);
+}
+
+TankLife::MovingFrames Tank::Player::GetSprites(PlayerId id, PlayerLevel level, Direction direction)
+{
+	int offset = 0;
+	offset += (int)id * 32;
+	offset += (int)level * 8;
+	offset += (int)direction * 2;
+	return 
 	{
-		SpriteUnit::P1_1_L0,
-		SpriteUnit::P1_1_L1,
-		SpriteUnit::P1_1_U0,
-		SpriteUnit::P1_1_U1,
-		SpriteUnit::P1_1_R0,
-		SpriteUnit::P1_1_R1,
-		SpriteUnit::P1_1_D0,
-		SpriteUnit::P1_1_D1,
+		(SpriteUnit)offset,
+		(SpriteUnit)offset + 1,
 	};
-	drawCall(frames[m_timer->GetSpriteId(100, _countof(frames))], m_topLeft);
+}
+
+float Tank::Player::GetSpeed()
+{
+	return 0.01f;
+}
+
+void Tank::Player::UpdatePerSecond()
+{
+	auto r = rand() % 5;
+	if (r < 4)
+	{
+		m_direction = (Direction)r;
+	}
 }

@@ -244,12 +244,12 @@ const array<RectF, (size_t)SpriteUnit::Count> s_tankSpriteMap
 	RectF{ 112.0f, 432.0f, 128.0f, 448.0f },
 };
 
-const std::array<RectF, (size_t)SpriteUnit::Count> Tank::CreateTankSpriteMap()
+const std::array<RectF, (size_t)SpriteUnit::Count> SpriteUtil::GetSpriteMap()
 {
 	return s_tankSpriteMap;
 }
 
-KennyKerr::SizeF Tank::GetSpriteUnitSize(SpriteUnit id)
+KennyKerr::SizeF SpriteUtil::GetUnitSize(SpriteUnit id)
 {
 	auto rect = s_tankSpriteMap[(size_t)id];
 	return KennyKerr::SizeF

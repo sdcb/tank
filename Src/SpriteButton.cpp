@@ -45,7 +45,7 @@ SpriteUnit Tank::SpriteButton::GetCurrentSprite() const
 
 float Tank::SpriteButton::GetCurrentSpriteSize() const
 {
-	return GetSpriteUnitSize(GetCurrentSprite()).Width *
+	return SpriteUtil::GetUnitSize(GetCurrentSprite()).Width *
 		(m_isX4 ? 2 : 1);
 }
 
@@ -65,7 +65,7 @@ void Tank::SpriteButton::Draw(DrawCall drawCall)
 	drawCall(GetCurrentSprite(), topLeft);
 	if (m_isX4)
 	{
-		auto size = GetSpriteUnitSize(GetCurrentSprite());
+		auto size = SpriteUtil::GetUnitSize(GetCurrentSprite());
 		drawCall(GetCurrentSprite(), Point2F{topLeft.X, topLeft.Y + size.Height});
 		drawCall(GetCurrentSprite(), Point2F{topLeft.X + size.Width, topLeft.Y});
 		drawCall(GetCurrentSprite(), Point2F{topLeft.X + size.Width, topLeft.Y + size.Height});

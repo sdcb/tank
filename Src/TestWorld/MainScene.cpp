@@ -13,7 +13,7 @@ Game::Game():
 	m_mapStore()
 {
 	m_map = m_mapStore.LoadMap(m_mapId);
-	m_sprites.push_back(unique_ptr<Player>(new Player( m_deviceResources.get(), Point2F{8.0f, 8.0f}, PlayerId::_1 )));
+	m_sprites.push_back(unique_ptr<Player>(new Player( m_deviceResources.get(), Point2F{64.0f, 64.0f}, PlayerId::_1 )));
 }
 
 void Game::CreateWindowSizeResources()
