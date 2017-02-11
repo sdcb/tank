@@ -98,7 +98,7 @@ Tank::Player::Player(DX::DeviceResources * dxRes, Point2F topLeft, PlayerId play
 
 void Tank::Player::DrawLive(const DrawCall & drawCall)
 {
-	drawCall(m_liveMovingFrames[m_movingFrame], m_topLeft);
+	drawCall(m_liveMovingFrames[m_timer->GetSpriteId(100, 2)], m_topLeft);
 }
 
 void Tank::Player::UpdateLive()

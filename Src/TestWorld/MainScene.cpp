@@ -7,6 +7,7 @@
 using namespace std;
 using namespace Tank;
 using namespace KennyKerr;
+using D2D1::ColorF;
 
 Game::Game(): 
 	m_mapId(1), 
@@ -26,4 +27,5 @@ void Game::CreateWindowSizeResources()
 void Game::Draw(KennyKerr::Direct2D::DeviceContext target)
 {
 	target.SetTransform(m_world);
+	target.FillRectangle(RectF{ 0.0f, 0.0f, GridSize, GridSize }, m_deviceResources->GetOrCreateColor(ColorF::Black));
 }
