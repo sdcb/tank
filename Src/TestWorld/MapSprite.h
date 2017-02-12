@@ -42,6 +42,9 @@ namespace Tank
 		Direction GetDirection() const { return m_direction; }
 		void SetDirection(Direction direction) { m_direction = direction; }
 
+		KennyKerr::Point2F GetTopLeft() const { return m_topLeft; }
+		void SetTopLeft(KennyKerr::Point2F v) { m_topLeft = v; }
+
 	protected:
 		virtual void UpdatePerSecond() = 0;
 		virtual void UpdateLive() = 0;
@@ -61,7 +64,11 @@ namespace Tank
 
 	class Enemy final : public TankLife
 	{
-		
+		// Í¨¹ý TankLife ¼Ì³Ð
+		virtual void UpdatePerSecond() override;
+		virtual void UpdateLive() override;
+		virtual void DrawLive(const DrawCall & drawCall) override;
+		virtual float GetSpeed() override;
 	};
 
 	class Player final : public TankLife

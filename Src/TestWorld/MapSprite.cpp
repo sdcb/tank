@@ -133,3 +133,20 @@ void Tank::Player::UpdatePerSecond()
 		m_direction = (Direction)r;
 	}
 }
+
+void Tank::Enemy::UpdatePerSecond()
+{
+}
+
+void Tank::Enemy::UpdateLive()
+{
+}
+
+void Tank::Enemy::DrawLive(const DrawCall & drawCall)
+{
+}
+
+float Tank::Enemy::GetSpeed()
+{
+	return 0.0f;
+}
