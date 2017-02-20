@@ -23,11 +23,24 @@ namespace Tank
 		_2, 
 	};
 
+	enum class EnemyId
+	{
+		_1, 
+		_2, 
+		_3, 
+		_4, 
+	};
+
 	enum class PlayerLevel
 	{
 		_1, 
 		_2, 
 		_3, 
+	};
+
+	enum class EnemyLevel
+	{
+		// to do
 	};
 
 	class TankLife : public SpriteBase
@@ -64,11 +77,22 @@ namespace Tank
 
 	class Enemy final : public TankLife
 	{
+	public:
+		Enemy(DX::DeviceResources * dxRes, KennyKerr::Point2F topLeft, EnemyId playerId);
+
 		// Í¨¹ý TankLife ¼Ì³Ð
 		virtual void UpdatePerSecond() override;
 		virtual void UpdateLive() override;
 		virtual void DrawLive(const DrawCall & drawCall) override;
 		virtual float GetSpeed() override;
+
+	private:
+		EnemyId      m_enemyId;
+		int          m_movingFrame = 0;
+		MovingFrames m_liveMovingFrames;
+		EnemyLevel   m_enemyLevel;
+
+		static MovingFrames GetSprites(EnemyId id, EnemyLevel level, Direction direction);
 	};
 
 	class Player final : public TankLife

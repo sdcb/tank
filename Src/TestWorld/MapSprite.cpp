@@ -134,12 +134,24 @@ void Tank::Player::UpdatePerSecond()
 	}
 }
 
+Tank::Enemy::Enemy(DX::DeviceResources * dxRes, KennyKerr::Point2F topLeft, EnemyId playerId): 
+	TankLife(dxRes, topLeft)
+{
+}
+
 void Tank::Enemy::UpdatePerSecond()
 {
+	auto r = rand() % 5;
+	if (r < 4)
+	{
+		m_direction = (Direction)r;
+	}
 }
 
 void Tank::Enemy::UpdateLive()
 {
+	m_topLeft = Math::ByDirection(m_topLeft, m_direction, GetSpeed());
+	m_liveMovingFrames = GetSprites(m_enemyId, m_enemyLevel, m_direction);
 }
 
 void Tank::Enemy::DrawLive(const DrawCall & drawCall)
