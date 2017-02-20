@@ -30,6 +30,7 @@ namespace Tank
 		_3, 
 		_4, 
 	};
+	EnemyId operator+(EnemyId id, int v);
 
 	enum class PlayerLevel
 	{
@@ -40,8 +41,12 @@ namespace Tank
 
 	enum class EnemyLevel
 	{
-		// to do
+		_1, 
+		_2, 
+		_3, 
+		_4, 
 	};
+	EnemyLevel operator+(EnemyLevel id, int v);
 
 	class TankLife : public SpriteBase
 	{
@@ -78,7 +83,9 @@ namespace Tank
 	class Enemy final : public TankLife
 	{
 	public:
-		Enemy(DX::DeviceResources * dxRes, KennyKerr::Point2F topLeft, EnemyId playerId);
+		Enemy(DX::DeviceResources * dxRes, KennyKerr::Point2F topLeft, 
+			EnemyId enemyId, 
+			EnemyLevel enemyLevel);
 
 		// Í¨¹ý TankLife ¼Ì³Ð
 		virtual void UpdatePerSecond() override;
@@ -90,7 +97,7 @@ namespace Tank
 		EnemyId      m_enemyId;
 		int          m_movingFrame = 0;
 		MovingFrames m_liveMovingFrames;
-		EnemyLevel   m_enemyLevel;
+		EnemyLevel   m_enemyLevel = EnemyLevel::_1;
 
 		static MovingFrames GetSprites(EnemyId id, EnemyLevel level, Direction direction);
 	};

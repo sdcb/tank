@@ -134,8 +134,11 @@ void Tank::Player::UpdatePerSecond()
 	}
 }
 
-Tank::Enemy::Enemy(DX::DeviceResources * dxRes, KennyKerr::Point2F topLeft, EnemyId playerId): 
-	TankLife(dxRes, topLeft)
+Tank::Enemy::Enemy(DX::DeviceResources * dxRes, KennyKerr::Point2F topLeft, 
+	EnemyId enemyId, EnemyLevel enemyLevel):
+	TankLife(dxRes, topLeft),
+	m_enemyId(enemyId), 
+	m_enemyLevel(enemyLevel)
 {
 }
 
@@ -156,9 +159,33 @@ void Tank::Enemy::UpdateLive()
 
 void Tank::Enemy::DrawLive(const DrawCall & drawCall)
 {
+	drawCall(m_liveMovingFrames[m_timer->GetSpriteId(100, 2)], m_topLeft);
 }
 
 float Tank::Enemy::GetSpeed()
 {
-	return 0.0f;
+	return 0.01f;
+}
+
+TankLife::MovingFrames Tank::Enemy::GetSprites(EnemyId id, EnemyLevel level, Direction direction)
+{
+	int offset = 64;
+	offset += (int)id * 8;
+	offset += (int)level * 32;
+	offset += (int)direction * 2;
+	return
+	{
+		(SpriteUnit)offset,
+		(SpriteUnit)offset + 1,
+	};
+}
+
+EnemyId Tank::operator+(EnemyId id, int v)
+{
+	return EnemyId((int)id + v);
+}
+
+EnemyLevel Tank::operator+(EnemyLevel id, int v)
+{
+	return EnemyLevel((int)id + v);
 }
