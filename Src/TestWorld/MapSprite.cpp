@@ -128,7 +128,8 @@ float Tank::Player::GetSpeed()
 void Tank::Player::UpdatePerSecond()
 {
 	auto r = rand() % 5;
-	if (r < 4)
+	const int DirectionCount = 4;
+	if (r < DirectionCount)
 	{
 		m_direction = (Direction)r;
 	}
