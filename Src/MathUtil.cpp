@@ -94,5 +94,10 @@ KennyKerr::Point2F Tank::Math::ByDirection(KennyKerr::Point2F p, Direction direc
 	default:
 		throw std::exception{ "unknown direction." };
 	}
+
+	if (p.X < 0.0f) p.X = 0.0f;
+	if (p.Y < 0.0f) p.Y = 0.0f;
+	if (p.X > GridSize) p.X = GridSize;
+	if (p.Y > GridSize) p.Y = GridSize;
 	return p;
 }
