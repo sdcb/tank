@@ -16,7 +16,7 @@ Game::Game():
 {
 	m_map = m_mapStore.LoadMap(m_mapId);
 	mt19937 rd{ random_device()() };
-	uniform_real<float> u{0.0f, 208.0f};
+	uniform_real<float> u{0.0f, GridSize};
 	for (auto i = 0; i < 100; ++i)
 	{
 		m_sprites.push_back(unique_ptr<Enemy>(new Enemy(
