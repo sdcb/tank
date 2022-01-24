@@ -91,9 +91,9 @@ void GameBase::Render()
 		});
 	}
 	
-	if (state.LeftControl && state.LeftAlt && state.F || _DEBUG)
+	if (state.LeftControl && state.LeftAlt && state.F)
 	{
-		auto fps = fmt::format(L"FPS: {0}", m_timer.GetFramesPerSecond());
+		std::wstring fps = std::format(L"FPS: {0}", m_timer.GetFramesPerSecond());
 		target.SetTransform(Matrix3x2F::Identity());
 		target.DrawText(fps.c_str(), fps.size(), m_deviceResources->GetTextFormat(), KennyKerr::RectF{ 0, 0, 500.0f, 500.0f },
 			m_deviceResources->GetOrCreateColor(ColorF::Yellow));
@@ -138,10 +138,9 @@ void GameBase::Clear()
 	auto context = m_deviceResources->GetD3DDeviceContext();
 	auto renderTarget = m_deviceResources->GetRenderTargetView();
 	auto depthStencil = m_deviceResources->GetDepthStencilView();
-
 	context->ClearRenderTargetView(renderTarget, Colors::Gray);
 	context->ClearDepthStencilView(depthStencil, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-	context->OMSetRenderTargets(1, &renderTarget, depthStencil);
+	context->OMSetRenderTargets(1, &renderTarget, depthStencil);	
 
 	// Set the viewport.
 	auto viewport = m_deviceResources->GetScreenViewport();
@@ -162,7 +161,7 @@ void GameBase::CreateDeviceResources()
 	auto target = m_deviceResources->GetD2DDeviceContext();
 
 	auto stream = wic.CreateStream();
-	HR(stream.InitializeFromFilename(L"All.png", GENERIC_READ));
+	HR(stream.InitializeFromFilename(L"./All.png", GENERIC_READ));
 	auto decoder = wic.CreateFormatConverter();
 	decoder.Initialize(wic.CreateDecoderFromStream(stream).GetFrame());
 	m_bmp = target.CreateBitmapFromWicBitmap1(decoder);

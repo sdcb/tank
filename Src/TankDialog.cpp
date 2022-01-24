@@ -17,7 +17,7 @@
 #endif
 
 
-bool Tank::TankDialog::Confirm(wchar_t * const content, wchar_t * const title)
+bool Tank::TankDialog::Confirm(const wchar_t * content, const wchar_t * title)
 {
 	int buttonSelected;
 	DX::ThrowIfFailed(

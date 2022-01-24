@@ -4,6 +4,7 @@
 //
 
 #pragma once
+#define _SILENCE_ALL_CXX20_DEPRECATION_WARNINGS
 
 #include <WinSDKVer.h>
 #define _WIN32_WINNT 0x0602
@@ -96,4 +97,4 @@ namespace DX
 struct LOGFONTW;
 #include <dx/dx.h>
 
-#include <fmt/format.h>
+#include <format>

@@ -5,6 +5,6 @@ namespace Tank
 	class TankDialog final
 	{
 	public:
-		static bool Confirm(wchar_t * const content, wchar_t * const title = nullptr);
+		static bool Confirm(const wchar_t* content, const wchar_t* title = nullptr);
 	};
 }

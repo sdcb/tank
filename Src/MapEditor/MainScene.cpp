@@ -159,7 +159,7 @@ void Game::DrawRight()
 {
 	auto target = m_deviceResources->GetD2DDeviceContext();
 	auto topLeft = Point2F{ GridSize + 2.0f, 2.0f };
-	auto levelStr = fmt::format(L"L{0}", m_mapId);
+	auto levelStr = std::format(L"L{0}", m_mapId);
 	target.DrawText(levelStr.c_str(), levelStr.size(), m_textFormat(), Math::MakeRectSquareByWH(topLeft, 800), m_black());
 }
 
